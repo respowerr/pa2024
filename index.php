@@ -6,28 +6,25 @@
     <title>Accueil - Au temps Donné</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.1.2/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="styles/header.css">
+    <link rel="stylesheet" href="styles/footer.css">
+    <link rel="script" href="script/script.js">
 </head>
 <body class="flex flex-col min-h-screen">
 
-<header class="header bg-gray-800 text-white p-4">
-    <div class="container mx-auto flex justify-between items-center">
-        <a href="#">
-            <img src="logo.jpeg" alt="Logo Au temps Donné" class="h-8 md:h-12">
+<header class="custom-header">
+    <div class="header-container">
+        <a href="index.php">
+            <img src="assets/logo.jpeg" alt="Logo Au temps Donné" class="logo">
         </a>
-        <button id="menu-btn" class="block md:hidden focus:outline-none">
-            <svg class="w-6 h-6 fill-current text-white" viewBox="0 0 24 24">
-                <path d="M4 6h16M4 12h16m-7 6h7"></path>
-            </svg>
-        </button>
-        <nav id="menu" class="hidden md:block">
-            <a href="#" class="text-white block md:inline-block mr-4 hover:text-gray-200">Accueil</a>
-            <a href="#" class="text-white block md:inline-block mr-4 hover:text-gray-200">À propos</a>
-            <a href="login.html" class="bg-green-600 py-2 px-4 rounded hover:bg-green-500 transition-colors duration-200 shadow block md:inline-block">Connexion</a>
-            <a href="signup.html" class="ml-2 bg-yellow-600 py-2 px-4 rounded hover:bg-yellow-500 transition-colors duration-200 shadow block md:inline-block">Inscription</a>
+        <nav class="header-nav">
+            <a href="screens/login.php" class="custom-btn-login">Connexion</a>
+            <a href="screens/signup.php" class="custom-btn-signup">Inscription</a>
         </nav>
     </div>
 </header>
+
 
 <section class="hero bg-gray-700 text-white py-20 flex-grow" style="background-image: url('chemin/vers/une/image.jpg'); background-size: cover; background-position: center;">
     <div class="container mx-auto text-center">
@@ -37,11 +34,12 @@
     </div>
 </section>
 
-<footer class="footer bg-gray-800 text-white text-center p-4">
+<footer class="custom-footer">
     © 2024 Au temps Donné. Tous droits réservés.
 </footer>
 
-<script src="script.js"></script>
+
+<script src="/script/script.js"></script>
 
 </body>
 </html>
