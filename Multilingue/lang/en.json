@@ -1,7 +1,34 @@
 
 {
-    "accueil": "Welcome",
-    "a_propos": "About us",
-    "titre_accueil": "Welcome to our website",
-    "description_accueil": "Explore our high-quality products."
+    "titre_accueil": "Home - Au temps Donné",
+    "Connexion": "Login",
+    "Inscription": "Inscription",
+    "Add_Language": "Add a language",
+    "Bienvenue": "Welcome  to \"Au temps Donné\"!",
+    "Rejoindre": "Join us in making a difference in the lives of those in need with our food aid and educational support.",
+    "Action":"Discover our actions",
+    "Footer" : "All rights reserved.",
+
+    "titre_login": "Login - Au temps Donné",
+    "Mail": "Email address :",
+    "MDP": "Password :",
+    "Connecter": "Log in",
+
+    "titre_inscription": "Inscription - Au temps Donné",
+    "Inscription_nom": "Full name :",
+    "Inscrire": "Sign up",
+
+    "titre_admin": "Panel Administrator",
+    "Profil": "Profile",
+
+    "ContenuProfil": "Main content...",
+
+    "Dashboard": "Dashboard",
+    "Utilisateurs": "Users",
+    "Messages": "Messages",
+    "Paramètres": "Settings"
+
+
+
+
 }

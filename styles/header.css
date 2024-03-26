@@ -1,0 +1,65 @@
+/* Header personnalisé */
+.custom-header {
+    background-color: #161817; 
+    padding: 1rem 0;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.logo {
+    height: auto;
+    width: 120px; 
+}
+
+.header-nav {
+    display: flex;
+    align-items: center;
+}
+
+.custom-btn-login, .custom-btn-signup {
+    display: inline-block;
+    padding: 10px 15px;
+    text-align: center;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    color: #fff; 
+    text-decoration: none; 
+    font-weight: bold; 
+    font-size: 14px; 
+    margin-left: 10px;
+}
+
+.custom-btn-login {
+    background-color: #4a76a8; 
+    border: 2px solid #3b5a82; 
+}
+
+.custom-btn-login:hover {
+    background-color: #3b5a82; 
+    color: #e1e1e1; 
+}
+
+.custom-btn-signup {
+    background-color: #49a078; 
+    border: 2px solid #3b8062; 
+}
+
+.custom-btn-signup:hover {
+    background-color: #3b8062; 
+    color: #e1e1e1; 
+}
+
+@media (max-width: 768px) {
+    .custom-btn-login, .custom-btn-signup {
+        padding: 8px 12px; 
+        font-size: 12px; 
+        margin-left: 8px; 
+    }
+}
