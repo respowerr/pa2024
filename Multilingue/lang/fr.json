@@ -1,0 +1,31 @@
+
+{
+    "titre_accueil": "Accueil - Au temps Donné",
+    "Connexion": "Connexion",
+    "Inscription": "Inscription",
+    "Add_Language": "Ajouotez un langage",
+    "Bienvenue": "Bienvenue chez \"Au temps Donné\"!",
+    "Rejoindre": "Rejoignez-nous pour faire une différence dans la vie des personnes en besoin avec notre aide alimentaire et notre soutien scolaire.",
+    "Action":"Découvrez nos actions",
+    "Footer" : "Tous droits réservés.",
+
+    "titre_login": "Connexion - Au temps Donné",
+    "Mail": "Adresse email :",
+    "MDP": "Mot de passe :",
+    "Connecter": "Se connecter",
+
+
+    "titre_inscription": "Inscription - Au temps Donné",
+    "Inscription_nom": "Nom complet :",
+    "Inscrire": "S'inscrire",
+
+    "titre_admin": "Panel Administrateur",
+    "Profil": "Profil",
+
+    "ContenuProfil": "Contenu principal...",
+    "Dashboard": "Tableau de bord",
+    "Utilisateurs": "Utilisateurs",
+    "Messages": "Messages",
+    "Paramètres": "Paramètres"
+
+}
