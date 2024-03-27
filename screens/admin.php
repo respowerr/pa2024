@@ -20,7 +20,7 @@ $translations = json_decode(file_get_contents($translations_file), true);
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title><?php echo $translations['titre_admin']; ?></title>
+    <title>Au temps Donné</title>
     <link rel="stylesheet" href="../styles/admin_panel.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
