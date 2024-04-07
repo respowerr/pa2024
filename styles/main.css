@@ -57,3 +57,21 @@ p {
 .submit-btn:hover {
     background-color: #0056b3; 
 }
+
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="tel"],
+textarea {
+    color: #000 !important; /* Force le texte à être noir */
+    background-color: #fff !important; /* Assure que le fond est blanc pour une meilleure lisibilité */
+}
+
+input[type="text"]::placeholder,
+input[type="password"]::placeholder,
+input[type="email"]::placeholder,
+input[type="tel"]::placeholder,
+textarea::placeholder {
+    color: #666 !important; /* Couleur des placeholders pour une meilleure visibilité */
+}

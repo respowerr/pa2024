@@ -29,3 +29,8 @@
     </div>
 </header>
 <link rel="stylesheet" href="../styles/header.css">
+<script>
+    document.querySelector('.hamburger-menu').addEventListener('click', function() {
+    document.querySelector('.header-nav').classList.toggle('active');
+});
+</script>

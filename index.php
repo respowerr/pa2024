@@ -25,7 +25,6 @@ $translations = json_decode(file_get_contents($translations_file), true);
     <title>Au temps Donné</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.1.2/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../styles/main.css">
     <link rel="stylesheet" href="styles/header.css">
     <link rel="stylesheet" href="styles/footer.css">
     <link rel="script" href="script/script.js">
@@ -60,7 +59,7 @@ $translations = json_decode(file_get_contents($translations_file), true);
 </header>
 
 
-<section class="hero bg-gray-700 text-white py-20 flex-grow" style="background-image: url('chemin/vers/une/image.jpg'); background-size: cover; background-position: center;">
+<section class="hero bg-gray-700 text-white py-20 flex-grow" style="background-size: cover; background-position: center;">
     <div class="container mx-auto text-center">
         <h2 class="text-5xl font-bold mb-4"><?php echo $translations['Bienvenue']; ?></h2>
         <p class="mb-8"><?php echo $translations['Rejoindre']; ?></p>
