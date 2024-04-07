@@ -3,7 +3,7 @@ package fr.amlezia.camions.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "camion")
+@Table(name = "camions")
 public class CamionsModel {
 
     @Id

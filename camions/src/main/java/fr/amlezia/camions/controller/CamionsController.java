@@ -18,11 +18,13 @@ public class CamionsController {
     @Autowired
     private CamionRepository camionRepository;
 
-    @GetMapping
-    public ResponseEntity<List<CamionsModel>> getCamions() {
-        List<CamionsModel> camions = camionRepository.findAll();
-        return ResponseEntity.ok(camions);
+    @GetMapping("/{id}")
+    public ResponseEntity<CamionsModel> getCamionById(@PathVariable Long id) {
+        CamionsModel camion = camionRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Camion introuvable avec l'ID : " + id));
+        return ResponseEntity.ok(camion);
     }
+
 
     @PostMapping
     public ResponseEntity<String> ajouterCamion(@RequestBody CamionsModel camion) {
