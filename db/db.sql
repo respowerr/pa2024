@@ -1,1 +1,0 @@
-    capacite INT(11),
