@@ -18,7 +18,6 @@ public class CamionsModel {
     @Column(name = "tournee_id")
     private Long tourneeId;
 
-    // Constructeurs
     public CamionsModel() {
     }
 
@@ -28,7 +27,6 @@ public class CamionsModel {
         this.tourneeId = tourneeId;
     }
 
-    // Getters et Setters
     public Long getId() {
         return id;
     }
@@ -60,8 +58,6 @@ public class CamionsModel {
     public void setTourneeId(Long tourneeId) {
         this.tourneeId = tourneeId;
     }
-
-
 
     //pour le débogage
     @Override
