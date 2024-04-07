@@ -1,16 +1,16 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const menuToggle = document.querySelector('.menu-toggle');
-    const sidebar = document.querySelector('.sidebar');
-    const content = document.querySelector('.content');
-
-    if (window.innerWidth <= 768) {
-        sidebar.classList.add('collapsed');
-        content.classList.add('collapsed');
-    }
-
-    menuToggle.addEventListener('click', function() {
-        sidebar.classList.toggle('collapsed');
-        content.classList.toggle('collapsed');
-        menuToggle.style.display = 'block'; 
-    });
+document.querySelector('.profile-btn').addEventListener('click', function() {
+    this.querySelector('.dropdown-content').classList.toggle('show');
 });
+
+// Ferme le menu déroulant si l'utilisateur clique en dehors de celui-ci
+window.onclick = function(event) {
+  if (!event.target.matches('.profile-btn')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    for (var i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}

@@ -1,67 +1,45 @@
-<?php
-    include '../multilingue/translations.php';
-?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Au temps Donné</title>
+    <title>Admin Panel - Au temps Donné</title>
     <link rel="stylesheet" href="../styles/admin_panel.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
 </head>
 <body>
 
-<div class="admin-panel">
-    <div class="content">
-        <header>
-            <li><a href="../multilingue/adminLang.php"><?php echo $translations['Add_Language']; ?></a></li>
-            <ul>
-            <?php
-                $json_data = file_get_contents('../multilingue/languages.json');
-                $available_languages = json_decode($json_data, true);
-                $current_language = isset($_GET['lang']) ? $_GET['lang'] : '';
-                echo '<li><select onchange="location = this.value;" style="color: black;">';
-                echo "<option value='' style='color: black;'>" . $translations['choose_language'][$current_language] . "</option>";
-                foreach ($available_languages as $lang_code => $lang_name) {
-                    $selected = ($current_language == $lang_code) ? 'selected' : '';
-                    echo "<option value='?lang=$lang_code' $selected style='color: black;'>$lang_name</option>";
-                }
-                echo '</select></li>';
-            ?>
-            </ul>
-            <button class="menu-toggle"><i class="fas fa-bars"></i></button>
-            <div class="profile-btn"><i class="fas fa-user"></i><?php echo $translations['Profil']; ?></div> 
-        </header>
-        <div class="admin-content"><?php echo $translations['ContenuProfil']; ?></div>
+<div class="header">
+    <div class="menu-toggle" id="menu-toggle">
+    <i class="fas fa-list-ul"></i>
     </div>
-    <div class="sidebar">
-        <ul>
-            <li><a href="#"><?php echo $translations['Dashboard']; ?></a></li>
-            <li><a href="#"><?php echo $translations['Utilisateurs']; ?></></li>
-            <li><a href="#"><?php echo $translations['Messages']; ?></a></li>
-            <li><a href="#"><?php echo $translations['Paramètres']; ?></a></li>
-        </ul>
+    <div class="profile-btn">
+        <i class="fas fa-user-circle"></i> <span>Profil</span>
+    </div>
+</div>
+
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h3>Admin Dashboard</h3>
+    </div>
+    <ul>
+        <li><a href="?page=trucks"><i class="fas fa-truck"></i> Camions</a></li>
+        <li><a href="?page=maraudes"><i class="fas fa-walking"></i> Maraudes</a></li>
+        <li><a href="?page=users"><i class="fas fa-users"></i> Utilisateurs</a></li>
+        <!-- Add more links as needed -->
+    </ul>
+</div>
+
+<div class="main-content">
+    <div class="content">
+        <!-- Dynamic content goes here -->
+        <!-- This area will display content based on the page selection. You can use PHP to include different files or write your logic here. -->
     </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const menuToggle = document.querySelector('.menu-toggle');
-    const sidebar = document.querySelector('.sidebar');
-    const content = document.querySelector('.content');
-
-
-    if (window.innerWidth <= 768) {
-        sidebar.classList.add('collapsed');
-        content.classList.add('collapsed');
-    }
-
-    menuToggle.addEventListener('click', function() {
-        sidebar.classList.toggle('collapsed');
-        content.classList.toggle('collapsed');
-        menuToggle.style.display = 'block'; 
-    });
+document.getElementById('menu-toggle').addEventListener('click', function() {
+    document.getElementById('sidebar').classList.toggle('active');
 });
 </script>
 

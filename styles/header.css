@@ -21,6 +21,29 @@
 .header-nav {
     display: flex;
     align-items: center;
+    margin-right: 20px;
+}
+
+.header-nav select {
+    background-color: #f0f0f0;
+    color: #333; 
+    padding: 8px 12px; 
+    border: 1px solid #ccc;
+    border-radius: 4px; 
+    font-weight: normal;
+    cursor: pointer; 
+    outline: none; 
+    margin-left: 10px; 
+}
+
+.header-nav select option {
+    background-color: white; 
+    color: #333; 
+}
+
+.header-nav select:focus, .header-nav select:hover {
+    border-color: #888;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
 }
 
 .custom-btn-login, .custom-btn-signup {
