@@ -14,8 +14,10 @@
         <i class="fas fa-list-ul"></i>
     </div>
     <div class="profile-btn">
+    <a href="#">
         <i class="fas fa-user-circle"></i> <span>Profil</span>
-    </div>
+    </a>
+</div>
 </div>
 
 
@@ -27,14 +29,11 @@
         <li><a href="?page=trucks"><i class="fas fa-truck"></i> Camions</a></li>
         <li><a href="?page=maraudes"><i class="fas fa-walking"></i> Maraudes</a></li>
         <li><a href="?page=users"><i class="fas fa-users"></i> Utilisateurs</a></li>
-        <!-- Add more links as needed -->
     </ul>
 </div>
 
 <div class="main-content">
     <div class="content">
-        <!-- Dynamic content goes here -->
-        <!-- This area will display content based on the page selection. You can use PHP to include different files or write your logic here. -->
     </div>
 </div>
 

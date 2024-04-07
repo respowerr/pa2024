@@ -51,6 +51,11 @@ body, html {
     z-index: 1002; 
 }
 
+.profile-btn a {
+    color: white;
+    text-decoration: none; 
+}
+
 .sidebar {
     background-color: #1a1a1a;
     color: white;
@@ -63,6 +68,12 @@ body, html {
     transition: transform 0.3s ease;
     transform: translateX(-250px); 
     z-index: 1000;
+}
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 .sidebar ul {
