@@ -11,7 +11,7 @@ body, html {
 }
 
 .header {
-    background-color: #303030; /* Gris foncé pour le header */
+    background-color: #303030; 
     color: white;
     padding: 20px;
     display: flex;
@@ -21,23 +21,34 @@ body, html {
     width: 100%;
     top: 0;
     z-index: 1001;
+    height: 60px; 
 }
+
 
 .menu-toggle {
     cursor: pointer;
-    color: white; /* Couleur blanche pour l'icône pour assurer la visibilité */
-    z-index: 1002; /* S'assure que le menu est au-dessus des autres éléments */
-    position: fixed; /* Positionne fixement le menu dans la fenêtre */
+    color: white;
+    z-index: 1002; 
+    position: fixed;
     top: 10px;
     left: 10px;
-    display: none; /* Cache le menu par défaut, il sera affiché sur les petits écrans */
-    background: #303030; /* Fond du bouton pour le distinguer du header */
+    display: none;
+    background: #303030; 
     padding: 10px;
     border-radius: 5px;
 }
 
 .menu-toggle i {
     font-size: 20px;
+}
+
+.profile-btn {
+    position: fixed;
+    top: 0;
+    right: 0;
+    margin-right: 20px;
+    margin-top: 20px; 
+    z-index: 1002; 
 }
 
 .sidebar {
@@ -50,7 +61,7 @@ body, html {
     bottom: 0;
     padding: 20px;
     transition: transform 0.3s ease;
-    transform: translateX(-250px); /* Départ hors de l'écran */
+    transform: translateX(-250px); 
     z-index: 1000;
 }
 
@@ -71,42 +82,40 @@ body, html {
 }
 
 .main-content {
-    padding-top: 60px; /* Espace pour le header */
+    padding-top: 60px; 
     transition: margin-left 0.3s ease;
-    margin-left: 0; /* Pleine largeur par défaut */
+    margin-left: 0; 
 }
 
-/* Media query pour les petits écrans : active le bouton de menu burger et ajuste la sidebar */
 @media screen and (max-width: 768px) {
     .menu-toggle {
-        display: block; /* Rend le bouton de menu burger visible */
+        display: block; 
     }
 
     .header {
-        justify-content: flex-start; /* Alignement des éléments du header */
-        padding-left: 50px; /* Espace pour le menu burger */
+        justify-content: flex-start; 
+        padding-left: 50px; 
     }
 
     .sidebar {
-        transform: translateX(-100%); /* Cache la sidebar hors de l'écran */
+        transform: translateX(-100%); 
     }
 
     .sidebar.active {
-        transform: translateX(0); /* Affiche la sidebar lorsque le menu est activé */
+        transform: translateX(0);
     }
 }
 
-/* Media query pour les grands écrans : désactive la cliquabilité du bouton de menu burger */
 @media screen and (min-width: 769px) {
     .menu-toggle {
-        pointer-events: none; /* Désactive les événements de pointeur pour le menu burger */
+        pointer-events: none;
     }
 
     .sidebar {
-        transform: translateX(0); /* La sidebar est toujours visible */
+        transform: translateX(0); 
     }
 
     .main-content {
-        margin-left: 250px; /* Espace pour la sidebar visible */
+        margin-left: 250px;
     }
 }

@@ -11,12 +11,13 @@
 
 <div class="header">
     <div class="menu-toggle" id="menu-toggle">
-    <i class="fas fa-list-ul"></i>
+        <i class="fas fa-list-ul"></i>
     </div>
     <div class="profile-btn">
         <i class="fas fa-user-circle"></i> <span>Profil</span>
     </div>
 </div>
+
 
 <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
