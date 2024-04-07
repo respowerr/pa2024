@@ -1,0 +1,29 @@
+{
+    "titre_accueil": "Degemer - E ti ar C'hwezh",
+    "Connexion": "Kevreañ",
+    "Inscription": "Emgav",
+    "Add_Language": "Ouzhpennit ur yezh",
+    "Bienvenue": "Degemer mat da E ti ar C'hwezh!",
+    "Rejoindre": "Krogit omp da zisplegañ un disoc'h e vuhez ar re fall ganeomp gant hor skoazelioù meziantel hag hor skolaj skolairek.",
+    "Action":"Kavet hon oberennoù",
+    "Footer" : "Goll brasañ gwirioù.",
+
+    "titre_login": "Kevreañ - E ti ar C'hwezh",
+    "Mail": "Postel lec'hel :",
+    "MDP": "Ger-tremen :",
+    "Connecter": "Kevreañ",
+
+
+    "titre_inscription": "Emgav - E ti ar C'hwezh",
+    "Inscription_nom": "Anv buan :",
+    "Inscrire": "Enrollañ",
+
+    "titre_admin": "Panel Armerzhour",
+    "Profil": "Profil",
+
+    "ContenuProfil": "Kontadenn priz mañ...",
+    "Dashboard": "Dashbord",
+    "Utilisateurs": "Implijerien",
+    "Messages": "Kemennoù",
+    "Paramètres": "Reolennoù"
+}

@@ -1,0 +1,29 @@
+{
+    "titre_accueil": "Willkomme - In de gegebene Zit",
+    "Connexion": "Verbinden",
+    "Inscription": "Ainschriewe",
+    "Add_Language": "Sprach hinzufüge",
+    "Bienvenue": "Willkomme bei \"In de gegebene Zit\"!",
+    "Rejoindre": "Kumm mit uns, um en Ënnerschid in de Lewe vun de Leit ze mache, die Hëllef met ere Nahrungsmittelversuergung und unser Schulunterstützung brauche.",
+    "Action":"Entdecke unser Aktionen",
+    "Footer" : "All Recht vorbehalte.",
+
+    "titre_login": "Verbinden - In de gegebene Zit",
+    "Mail": "E-Mail-Adress :",
+    "MDP": "Passwort :",
+    "Connecter": "Sich verbinden",
+
+
+    "titre_inscription": "Ainschriewe - In de gegebene Zit",
+    "Inscription_nom": "Vollständiger Name :",
+    "Inscrire": "Sich ainschriewe",
+
+    "titre_admin": "Verwaltigs-Pannel",
+    "Profil": "Profil",
+
+    "ContenuProfil": "Hauptinhalt...",
+    "Dashboard": "Dashboard",
+    "Utilisateurs": "Benutzer",
+    "Messages": "Messages",
+    "Paramètres": "Einstellungen"
+}
