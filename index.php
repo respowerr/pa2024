@@ -10,7 +10,7 @@ if (isset($_GET['lang'])) {
 } else if (isset($_SESSION['language'])) {
     $language = $_SESSION['language'];
 } else {
-    $language = 'fr'; 
+    $language = 'en'; 
 }
 
 $translations_file = "multilingue/lang/$language.json";
