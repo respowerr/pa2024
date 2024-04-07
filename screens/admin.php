@@ -1,19 +1,5 @@
 <?php
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
-if (isset($_GET['lang'])) {
-    $language = $_GET['lang'];
-    $_SESSION['language'] = $language;
-} else if (isset($_SESSION['language'])) {
-    $language = $_SESSION['language'];
-} else {
-    $language = 'fr';
-}
-
-$translations_file = "../Multilingue/lang/$language.json";
-$translations = json_decode(file_get_contents($translations_file), true);
+    include '../multilingue/translations.php';
 ?>
 
 <!DOCTYPE html>
@@ -29,10 +15,10 @@ $translations = json_decode(file_get_contents($translations_file), true);
 <div class="admin-panel">
     <div class="content">
         <header>
-            <li><a href="../Multilingue/adminLang.php"><?php echo $translations['Add_Language']; ?></a></li>
+            <li><a href="../multilingue/adminLang.php"><?php echo $translations['Add_Language']; ?></a></li>
             <ul>
             <?php
-                $json_data = file_get_contents('Multilingue/languages.json');
+                $json_data = file_get_contents('../multilingue/languages.json');
                 $available_languages = json_decode($json_data, true);
                 $current_language = isset($_GET['lang']) ? $_GET['lang'] : '';
                 echo '<li><select onchange="location = this.value;" style="color: black;">';

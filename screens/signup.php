@@ -1,3 +1,7 @@
+<?php
+    include '../multilingue/translations.php';
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -68,16 +72,16 @@
 
                 if (response.ok) {
                     const jsonResponse = await response.json();
-                    message de succès ou en redirigeant l'utilisateur
+                    //message de succès ou en redirigeant l'utilisateur
                     console.log(jsonResponse);
                     alert("Inscription réussie!");
-                    window.location.href = "page_de_connexion_ou_autre.html";
+                    window.location.href = "login.php";
                     } else {
-                        console.error('Erreur lors de l'inscription. Veuillez réessayer.');
+                        console.error("Erreur lors de l'inscription. Veuillez réessayer.");
                         alert("Erreur lors de l'inscription. Veuillez réessayer.");
                     }
                     } catch (error) {
-                    console.error('Erreur lors de l'envoi de la requête:', error);
+                    console.error("Erreur lors de l'envoi de la requête:", error);
                     alert("Erreur lors de l'envoi de la requête. Veuillez vérifier votre connexion.");
                     }
                     };

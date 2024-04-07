@@ -1,3 +1,7 @@
+<?php
+    include '../multilingue/translations.php';
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>

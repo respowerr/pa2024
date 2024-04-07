@@ -1,5 +1,5 @@
 <?php
-    include '../Multilingue/translations.php';
+    include '../multilingue/translations.php';
 ?>
 
 <footer class="custom-footer">

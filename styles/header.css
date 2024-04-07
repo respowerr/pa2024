@@ -1,3 +1,4 @@
+/* Header personnalisé */
 .custom-header {
     background-color: #161817; 
     padding: 1rem 0;
@@ -47,8 +48,7 @@
 
 .custom-btn-signup {
     background-color: #49a078; 
-    border: 2px solid #3b8062;
-margin-right: 10%;
+    border: 2px solid #3b8062; 
 }
 
 .custom-btn-signup:hover {

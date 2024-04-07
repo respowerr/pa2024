@@ -18,11 +18,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $json_data = json_encode($languages, JSON_PRETTY_PRINT);
             file_put_contents($languages_file, $json_data);
+            header("Location: ../screens/admin.php");
+            exit();
         } else {
             echo "Une erreur s'est produite lors du téléchargement du fichier.";
+            header("Location: ../multilingue/adminLang.php.php");
+            exit();
         }
     } else {
         echo "Une erreur s'est produite lors du téléchargement du fichier.";
+        header("Location: ../multilingue/adminLang.php.php");
+        exit();
     }
 }
 ?>

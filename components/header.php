@@ -1,5 +1,5 @@
 <?php
-    include '../Multilingue/translations.php';
+    include '../multilingue/translations.php';
 ?>
 
 <header class="custom-header">
@@ -12,7 +12,7 @@
             <a href="../screens/signup.php" class="custom-btn-signup"><?php echo $translations['Inscription']; ?></a>
             <ul>
             <?php
-                $json_data = file_get_contents('../Multilingue/languages.json');
+                $json_data = file_get_contents('../multilingue/languages.json');
                 $available_languages = json_decode($json_data, true);
                 $current_language = isset($_GET['lang']) ? $_GET['lang'] : '';
                 echo '<li><select onchange="location = this.value;" style="color: black;">';
@@ -23,7 +23,7 @@
                 }
                 echo '</select></li>';
             ?>
-                <!-- <li><a href="../Multilingue/adminLang.php"><?php echo $translations['Add_Language']; ?></a></li> -->
+                <!-- <li><a href="../multilingue/adminLang.php"><?php echo $translations['Add_Language']; ?></a></li> -->
             </ul>
         </nav>
     </div>

@@ -1,3 +1,4 @@
+/* Base du site */
 body {
     font-family: 'Inter', sans-serif;
     margin: 0;
@@ -7,6 +8,7 @@ body {
 
 
 a {
+    color: #007bff;
     text-decoration: none;
 }
 
@@ -17,7 +19,7 @@ a:hover {
 
 
 h1, h2, h3, h4, h5, h6 {
-    color: #ffffff;
+    color: #333;
 }
 
 p {
