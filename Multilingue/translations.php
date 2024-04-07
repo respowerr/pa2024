@@ -10,7 +10,7 @@ if (isset($_GET['lang'])) {
 } else if (isset($_SESSION['language'])) {
     $language = $_SESSION['language'];
 } else {
-    $language = 'fr'; // Langue par défaut
+    $language = 'en'; // Langue par défaut
 }
 
 // Charger les traductions depuis le fichier JSON
