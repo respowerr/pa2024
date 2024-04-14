@@ -1,12 +1,6 @@
 <?php
-// logout.php
-
-// Déconnexion de l'utilisateur
 session_start();
-session_unset();
-session_destroy();
-
-// Redirection vers la page d'accueil
-header("Location: index.php");
-exit();
+unset($_SESSION['Authorization']);  // Supprimer le jeton de la session
+header('Location: index.php');  // Rediriger vers la page d'accueil ou la page de connexion
+exit;
 ?>

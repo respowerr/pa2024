@@ -1,6 +1,8 @@
 <?php
 // index.php
 
+session_start(); // Assurez-vous que la session est démarrée
+
 // Vérification de la session
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -20,8 +22,8 @@ if (isset($_GET['lang'])) {
 $translations_file = "multilingue/lang/$language.json";
 $translations = json_decode(file_get_contents($translations_file), true);
 
-// Vérification de la connexion
-$is_logged_in = isset($_SESSION['user_id']); // Vous devrez ajuster cette condition selon votre système de connexion
+// Vérification de la connexion en utilisant le jeton JWT
+$is_logged_in = isset($_SESSION['Authorization']) && !empty($_SESSION['Authorization']); // Vous devrez ajuster cette condition pour valider le jeton
 
 ?>
 
@@ -35,8 +37,7 @@ $is_logged_in = isset($_SESSION['user_id']); // Vous devrez ajuster cette condit
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/header.css">
     <link rel="stylesheet" href="styles/footer.css">
-    <link rel="script" href="script/script.js">
-    
+    <script src="script/script.js"></script>
 </head>
 <body class="flex flex-col min-h-screen">
 
@@ -73,7 +74,6 @@ $is_logged_in = isset($_SESSION['user_id']); // Vous devrez ajuster cette condit
     </div>
 </header>
 
-
 <section class="hero bg-gray-700 text-white py-20 flex-grow" style="background-size: cover; background-position: center;">
     <div class="container mx-auto text-center">
         <h2 class="text-5xl font-bold mb-4"><?php echo $translations['Bienvenue']; ?></h2>
@@ -85,9 +85,6 @@ $is_logged_in = isset($_SESSION['user_id']); // Vous devrez ajuster cette condit
 <footer class="custom-footer">
     © 2024 Au temps Donné. <?php echo $translations['Footer']; ?>
 </footer>
-
-
-<script src="/script/script.js"></script>
 
 </body>
 </html>

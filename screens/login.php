@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log("Enregistrement du nouveau jeton.");
     }
     localStorage.setItem('Authorization', `Bearer ${jsonResponse.accessToken}`);
-    window.location.href = 'http://localhost/PA2024/'; // Redirige vers cette URL en cas de succès
+    window.location.href = 'http://localhost/PA2024/screens/admin.php'; // Redirige vers cette URL en cas de succès
 } else {
     loginMessage.textContent = "Failed to login. Please check your credentials.";
     loginMessage.className = "text-red-500";
