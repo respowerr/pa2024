@@ -1,9 +1,12 @@
-
 <?php
+// index.php
+
+// Vérification de la session
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+// Vérification de la langue
 if (isset($_GET['lang'])) {
     $language = $_GET['lang'];
     $_SESSION['language'] = $language;
@@ -13,10 +16,15 @@ if (isset($_GET['lang'])) {
     $language = 'fr'; 
 }
 
+// Inclusion des traductions
 $translations_file = "multilingue/lang/$language.json";
 $translations = json_decode(file_get_contents($translations_file), true);
+
+// Vérification de la connexion
+$is_logged_in = isset($_SESSION['user_id']); // Vous devrez ajuster cette condition selon votre système de connexion
+
 ?>
-    
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -38,8 +46,15 @@ $translations = json_decode(file_get_contents($translations_file), true);
             <img src="assets/logo.jpeg" alt="Logo Au temps Donné" class="logo">
         </a>
         <nav class="header-nav">
-            <a href="screens/login.php" class="custom-btn-login"><?php echo $translations['Connexion']; ?></a>
-            <a href="screens/signup.php" class="custom-btn-signup"><?php echo $translations['Inscription']; ?></a>
+            <?php if ($is_logged_in) : ?>
+                <!-- L'utilisateur est connecté, afficher les liens du panel admin et de déconnexion -->
+                <a href="admin_panel.php" class="custom-btn-admin"><?php echo $translations['Panel_admin']; ?></a>
+                <a href="logout.php" class="custom-btn-logout"><?php echo $translations['Déconnexion']; ?></a>
+            <?php else : ?>
+                <!-- L'utilisateur n'est pas connecté, afficher les liens de connexion et d'inscription -->
+                <a href="screens/login.php" class="custom-btn-login"><?php echo $translations['Connexion']; ?></a>
+                <a href="screens/signup.php" class="custom-btn-signup"><?php echo $translations['Inscription']; ?></a>
+            <?php endif; ?>
             <ul>
             <?php
                 $json_data = file_get_contents('multilingue/languages.json');

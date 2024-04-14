@@ -1,3 +1,13 @@
+:root {
+    --dark-bg: #303030;
+    --sidebar-bg: #1a1a1a;
+    --link-hover-bg: #505050;
+    --button-bg: #4CAF50;
+    --button-hover-bg: #45a049;
+    --text-color: #fff;
+    --light-bg: #f9f9f9;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -8,11 +18,12 @@ body, html {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     height: 100%;
     color: #333;
+    padding-top: 20px;
 }
 
 .header {
-    background-color: #303030; 
-    color: white;
+    background-color: var(--dark-bg);
+    color: var(--text-color);
     padding: 20px;
     display: flex;
     justify-content: space-between;
@@ -21,112 +32,97 @@ body, html {
     width: 100%;
     top: 0;
     z-index: 1001;
-    height: 60px; 
+    height: 60px;
 }
 
-
-.menu-toggle {
-    cursor: pointer;
-    color: white;
-    z-index: 1002; 
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    display: none;
-    background: #303030; 
-    padding: 10px;
-    border-radius: 5px;
-}
-
-.menu-toggle i {
-    font-size: 20px;
-}
-
-.profile-btn {
-    position: fixed;
-    top: 0;
-    right: 0;
-    margin-right: 20px;
-    margin-top: 20px; 
-    z-index: 1002; 
-}
-
-.profile-btn a {
-    color: white;
-    text-decoration: none; 
+.header, .header * {
+    background-color: var(--dark-bg) !important;
+    color: var(--text-color) !important;
 }
 
 .sidebar {
-    background-color: #1a1a1a;
-    color: white;
+    background-color: var(--sidebar-bg);
+    color: var(--text-color);
     width: 250px;
     position: fixed;
     top: 60px;
     left: 0;
     bottom: 0;
     padding: 20px;
-    transition: transform 0.3s ease;
-    transform: translateX(-250px); 
     z-index: 1000;
-}
-.sidebar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
 }
 
 .sidebar ul {
     list-style: none;
+    padding: 0;
 }
 
 .sidebar ul li a {
-    color: white;
+    color: var(--text-color);
     padding: 10px;
     text-decoration: none;
     display: block;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s;
 }
 
 .sidebar ul li a:hover {
-    background-color: #303030;
+    background-color: var(--link-hover-bg);
 }
 
 .main-content {
-    padding-top: 60px; 
-    transition: margin-left 0.3s ease;
-    margin-left: 0; 
+    padding-top: 20px;
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    padding: 20px;
 }
 
-@media screen and (max-width: 768px) {
-    .menu-toggle {
-        display: block; 
-    }
-
-    .header {
-        justify-content: flex-start; 
-        padding-left: 50px; 
-    }
-
-    .sidebar {
-        transform: translateX(-100%); 
-    }
-
-    .sidebar.active {
-        transform: translateX(0);
-    }
+.main-content h1 {
+    margin-top: 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
-@media screen and (min-width: 769px) {
-    .menu-toggle {
-        pointer-events: none;
-    }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    min-width: 600px;
+}
 
-    .sidebar {
-        transform: translateX(0); 
-    }
+thead {
+    background-color: var(--dark-bg);
+    color: var(--text-color);
+}
 
-    .main-content {
-        margin-left: 250px;
-    }
+th, td {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:hover {
+    background-color: #f5f5f5;
+}
+
+button {
+    padding: 6px 12px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #d32f2f;
+}
+table thead tr th {
+    background-color: var(--dark-bg);  /* Couleur de fond fixée pour les en-têtes */
+    color: var(--text-color);
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+table thead tr th:hover {
+    background-color: var(--dark-bg); /* Empêche le changement de couleur lors du survol */
 }

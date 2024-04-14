@@ -54,27 +54,32 @@ document.addEventListener("DOMContentLoaded", function() {
         };
 
         try {
-            const response = await fetch('http://localhost:8080/account/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
+    const response = await fetch('http://localhost:8080/account/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
 
-            if (response.ok) {
-                const jsonResponse = await response.json();
-                localStorage.setItem('authToken', `Bearer ${jsonResponse.accessToken}`);
-                window.location.href = '/'; 
-            } else {
-                loginMessage.textContent = "Failed to login. Please check your credentials.";
-                loginMessage.className = "text-red-500";
-            }
-        } catch (error) {
-            console.error('Error during login:', error);
-            loginMessage.textContent = "An error occurred. Please try again.";
-            loginMessage.className = "text-red-500";
-        }
+    if (response.ok) {
+    const jsonResponse = await response.json();
+    // Vérifie si un jeton existe déjà
+    const existingToken = localStorage.getItem('Authorization');
+    if (existingToken) {
+        console.log("Remplacement du jeton existant par le nouveau.");
+    } else {
+        console.log("Enregistrement du nouveau jeton.");
+    }
+    localStorage.setItem('Authorization', `Bearer ${jsonResponse.accessToken}`);
+    window.location.href = 'http://localhost/PA2024/'; // Redirige vers cette URL en cas de succès
+} else {
+    loginMessage.textContent = "Failed to login. Please check your credentials.";
+    loginMessage.className = "text-red-500";
+}
+} catch (error) {
+    console.error('Erreur:', error);
+}
     };
 });
 </script>
