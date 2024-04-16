@@ -1,7 +1,36 @@
-
 {
-    "accueil": "Willkommen",
-    "a_propos": "Über uns",
-    "titre_accueil": "Willkommen auf unserer Website",
-    "description_accueil": "Entdecken Sie unsere hochwertigen Produkte."
+    "titre_accueil": "Startseite - Au temps Donné",
+    "Connexion": "Anmeldung",
+    "Inscription": "Anmeldung",
+    "Add_Language": "Sprache hinzufügen",
+    "Bienvenue": "Willkommen bei \"Au temps Donné\"!",
+    "Rejoindre": "Schließen Sie sich uns an, um einen Unterschied im Leben von Menschen in Not mit unserer Lebensmittelhilfe und unserer Bildungsunterstützung zu machen.",
+    "Action": "Entdecken Sie unsere Aktionen",
+    "Footer": "Alle Rechte vorbehalten.",
+    
+    "titre_login": "Anmeldung - Au temps Donné",
+    "Mail": "E-Mail-Adresse :",
+    "MDP": "Passwort :",
+    "Connecter": "Anmelden",
+
+    "titre_inscription": "Anmeldung - Au temps Donné",
+    "Inscription_nom": "Vollständiger Name :",
+    "Inscrire": "Anmelden",
+
+    "titre_admin": "Administrationsbereich",
+    "Profil": "Profil",
+
+    "ContenuProfil": "Hauptinhalt...",
+    "Dashboard": "Dashboard",
+    "Utilisateurs": "Benutzer",
+    "Messages": "Nachrichten",
+    "Paramètres": "Einstellungen",
+
+    "login_error": "Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Anmeldeinformationen.",
+    "Prénom": "Vorname",
+    "Nom_de_famille": "Nachname",
+    "Nom_utilisateur": "Benutzername",
+    "Email": "Email",
+    "Téléphone": "Telefon",
+    "Mot_de_passe": "Passwort"
 }

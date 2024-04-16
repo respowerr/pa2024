@@ -1,34 +1,36 @@
-
 {
     "titre_accueil": "Home - Au temps Donné",
-    "Connexion": "Login",
-    "Inscription": "signup",
-    "Add_Language": "Add a language",
-    "Bienvenue": "Welcome  to \"Au temps Donné\"!",
-    "Rejoindre": "Join us in making a difference in the lives of those in need with our food aid and educational support.",
-    "Action":"Discover our actions",
-    "Footer" : "All rights reserved.",
-
+    "Connexion": "Log In",
+    "Inscription": "Sign Up",
+    "Add_Language": "Add Language",
+    "Bienvenue": "Welcome to \"Au temps Donné\"!",
+    "Rejoindre": "Join us to make a difference in the lives of people in need with our food aid and educational support.",
+    "Action": "Discover our actions",
+    "Footer": "All rights reserved.",
+    
     "titre_login": "Login - Au temps Donné",
-    "Mail": "Email address :",
-    "MDP": "Password :",
-    "Connecter": "Log in",
+    "Mail": "Email address:",
+    "MDP": "Password:",
+    "Connecter": "Log In",
 
-    "titre_inscription": "Inscription - Au temps Donné",
-    "Inscription_nom": "Full name :",
-    "Inscrire": "Sign up",
+    "titre_inscription": "Sign Up - Au temps Donné",
+    "Inscription_nom": "Full Name:",
+    "Inscrire": "Sign Up",
 
-    "titre_admin": "Panel Administrator",
+    "titre_admin": "Admin Panel",
     "Profil": "Profile",
 
     "ContenuProfil": "Main content...",
-
     "Dashboard": "Dashboard",
     "Utilisateurs": "Users",
     "Messages": "Messages",
-    "Paramètres": "Settings"
+    "Paramètres": "Settings",
 
-
-
-
+    "login_error": "Failed to login. Please check your credentials.",
+    "Prénom": "First Name",
+    "Nom_de_famille": "Last Name",
+    "Nom_utilisateur": "Username",
+    "Email": "Email",
+    "Téléphone": "Phone",
+    "Mot_de_passe": "Password"
 }
