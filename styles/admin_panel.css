@@ -108,6 +108,7 @@ button:hover {
 
 .profile-btn i {
     margin-right: 8px;
+    text-decoration: none;
 }
 
 .menu-toggle {
@@ -189,4 +190,7 @@ thead th {
     padding: 20px;
     font-style: italic;
     color: var(--profile-bg);
+}
+span{
+    text-decoration: none;
 }
