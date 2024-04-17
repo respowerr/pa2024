@@ -41,13 +41,6 @@
 <div class="main-content">
     <div class="content" id="content">
         <h1>Gestion des Camions</h1>
-        <form method="post">
-            <input type="text" name="plaqueImmatriculation" placeholder="Plaque d'immatriculation" required>
-            <input type="number" name="capacite" placeholder="Capacité" required>
-            <input type="number" name="tourneeId" placeholder="ID de la tournée" required>
-            <input type="submit" name="addTruck" value="Ajouter le camion">
-        </form>
-
         <?php
         $authorizationToken = urldecode($_COOKIE['Authorization'] ?? '');
 
@@ -113,7 +106,7 @@
             $camions = json_decode($response, true);
             if (is_array($camions)) {
                 echo "<table>";
-                echo "<thead><tr><th>ID</th><th>Plaque d'immatriculation</th><th>Capacité</th><th>Actions</th></tr></thead><tbody>";
+                echo "<thead><tr><th>ID</th><th>Plaque d'immatriculation</th><th>Capacité</th></tr></thead><tbody>";
                 foreach ($camions as $camion) {
                     echo "<tr>";
                     echo "<td>{$camion['id']}</td>";
@@ -121,8 +114,6 @@
                     echo "<td>{$camion['capacite']}</td>";
                     echo "<td>";
                     echo "<form method='post'>";
-                    echo "<input type='hidden' name='delete_id' value='{$camion['id']}'>";
-                    echo "<input type='submit' value='Supprimer' onclick='return confirm(\"Êtes-vous sûr de vouloir supprimer ce camion ?\");'>";
                     echo "</form>";
                     echo "</td>";
                     echo "</tr>";

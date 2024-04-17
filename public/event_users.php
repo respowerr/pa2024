@@ -26,8 +26,7 @@
     <ul class="main-menu">
         <li class="active"><a href="home_admin.php"><i class="fas fa-home"></i> Home</a></li>
         <li><a href="camion_users.php"><i class="fas fa-truck"></i> Truck</a></li>
-        <li><a href="event_admin.php"><i class="fas fa-calendar-alt"></i> Event</a></li>
-        <li><a href="users_admin.php"><i class="fas fa-users"></i> Users</a></li>
+        <li><a href="event_users.php"><i class="fas fa-calendar-alt"></i> Event</a></li>
     </ul>
     <div class="admin-section">
         <h4>Administration</h4>
@@ -124,7 +123,6 @@
                     <th>End</th>
                     <th>Location</th>
                     <th>Description</th>
-                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -140,8 +138,6 @@
                     <td>
                         <a href="?editId=<?= $event['id'] ?>">Modifier</a>
                         <form method="post" onsubmit="return confirm('Are you sure you want to delete this event?');">
-                            <input type="hidden" name="deleteId" value="<?= $event['id'] ?>">
-                            <button type="submit" name="deleteEvent">Supprimer</button>
                         </form>
                     </td>
                 </tr>
