@@ -1,12 +1,9 @@
 <?php
-// index.php
 
-// Assurez-vous que la session est démarrée
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Vérification de la langue
 if (isset($_GET['lang'])) {
     $language = $_GET['lang'];
     $_SESSION['language'] = $language;
@@ -16,12 +13,10 @@ if (isset($_GET['lang'])) {
     $language = 'fr'; 
 }
 
-// Inclusion des traductions
 $translations_file = "../Multilingue/lang/$language.json";
 $translations = json_decode(file_get_contents($translations_file), true);
 
-// Vérification de la connexion en utilisant le jeton JWT
-$is_logged_in = isset($_SESSION['Authorization']) && !empty($_SESSION['Authorization']); // Vous devrez ajuster cette condition pour valider le jeton
+$is_logged_in = isset($_SESSION['Authorization']) && !empty($_SESSION['Authorization']);
 ?>
 
 <!DOCTYPE html>
@@ -37,7 +32,6 @@ $is_logged_in = isset($_SESSION['Authorization']) && !empty($_SESSION['Authoriza
 </head>
 <body class="flex flex-col min-h-screen">
 
-<!-- Insérez le contenu du header ici -->
 <?php include_once('../components/header.php'); ?>
 
 <section class="hero bg-gray-700 text-white py-20 flex-grow" style="background-size: cover; background-position: center;">
@@ -48,7 +42,6 @@ $is_logged_in = isset($_SESSION['Authorization']) && !empty($_SESSION['Authoriza
     </div>
 </section>
 
-<!-- Insérez le contenu du footer ici -->
 <?php include_once('../components/footer.php'); ?>
 
 </body>

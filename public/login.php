@@ -1,5 +1,5 @@
-<?php 
-include '../multilingue/translations.php'; 
+<?php
+include '../multilingue/translations.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
@@ -54,12 +54,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         <form id="loginForm" action="" method="POST">
             <div class="mb-4">
-                <input type="text" id="username" name="username" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-black" placeholder="<?php echo $translations['username_placeholder'] ?? 'Username'; ?>" required>
+                <label for="username" class="block text-gray-700"><?php echo $translations['Nom_utilisateur'] ?? 'Username'; ?></label>
+                <input type="text" id="username" name="username" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-black" required>
             </div>
             <div class="mb-4">
-                <input type="password" id="password" name="password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-black" placeholder="<?php echo $translations['password_placeholder'] ?? 'Password'; ?>" required>
+                <label for="password" class="block text-gray-700"><?php echo $translations['Mot_de_passe'] ?? 'Password'; ?></label>
+                <input type="password" id="password" name="password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 text-black" required>
             </div>
-            <button type="submit" class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition-colors duration-200"><?php echo $translations['login_button'] ?? 'Connect'; ?></button>
+            <button type="submit" class="bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition-colors duration-200"><?php echo $translations['Connecter'] ?? 'Log In'; ?></button>
         </form>
     </div>
 </div>
