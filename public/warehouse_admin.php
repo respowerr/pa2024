@@ -18,16 +18,26 @@
     </div>
 </div>
 
-<div class="sidebar" id="sidebar">
+<div class="sidebar">
     <div class="sidebar-header">
-        <h3>Admin Dashboard</h3>
+        <h3><i class="fas fa-tachometer-alt"></i> Dashboard</h3>
     </div>
-    <ul>
-        <li class="active"><a href="home_admin.php"></i> Home</a></li>
-        <li class="active"><a href="camion_admin.php"></i> Camions</a></li>
-        <li class="active"><a href="event_admin.php"></i> Event</a></li>
+    <ul class="main-menu">
+        <li class="active"><a href="home_admin.php"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="camion_admin.php"><i class="fas fa-truck"></i> Truck</a></li>
+        <li><a href="event_admin.php"><i class="fas fa-calendar-alt"></i> Event</a></li>
+        <li><a href="users_admin.php"><i class="fas fa-users"></i> Users</a></li>
     </ul>
+    <div class="admin-section">
+        <h4>Administration</h4>
+        <ul class="admin-menu">
+            <li><a href="camion_admin.php"><i class="fas fa-truck"></i> Truck</a></li>
+            <li><a href="event_admin.php"><i class="fas fa-calendar-alt"></i> Event</a></li>
+            <li><a href="users_admin.php"><i class="fas fa-users"></i> Users</a></li>
+        </ul>
+    </div>
 </div>
+
 
 <div class="main-content">
     <div class="content" id="content">

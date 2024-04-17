@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Panel - Gestion des Événements</title>
+    <title>Admin Panel - Gestion des Utilisateurs</title>
     <link rel="stylesheet" href="../styles/admin_panel.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -40,45 +40,56 @@
 </div>
 
 
+
 <div class="main-content">
     <div class="content" id="content">
-        <h1>Gestion des Événements</h1>
+        <h1>Gestion des Utilisateurs</h1>
 
         <?php
-        $authorizationToken = urldecode($_COOKIE['Authorization'] ?? '');
-        $ch = curl_init('http://localhost:8080/event');
+        $authorizationToken = 'Bearer ' . ($_COOKIE['Authorization'] ?? '');
+        $ch = curl_init('http://localhost:8080/account');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: ' . $authorizationToken]);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: $authorizationToken"]);
+
         $response = curl_exec($ch);
-        $events = json_decode($response, true);
+        $users = json_decode($response, true);
         curl_close($ch);
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['deleteId'])) {
+            $ch = curl_init('http://localhost:8080/account/delete/' . $_POST['deleteId']);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: ' . $authorizationToken]);
+            curl_exec($ch);
+            curl_close($ch);
+            echo "<p>User deleted successfully. Please refresh the page to see updated data.</p>";
+        }
         ?>
 
         <table>
             <thead>
                 <tr>
-                    <th>Event Name</th>
-                    <th>Type</th>
-                    <th>Start</th>
-                    <th>End</th>
-                    <th>Location</th>
-                    <th>Description</th>
-                    <th>Action</th>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Full Name</th>
+                    <th>Role</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($events as $event): ?>
+                <?php foreach ($users as $user): ?>
                 <tr>
-                    <td><?= htmlspecialchars($event['eventName']) ?></td>
-                    <td><?= htmlspecialchars($event['eventType']) ?></td>
-                    <td><?= htmlspecialchars($event['eventStart']) ?></td>
-                    <td><?= htmlspecialchars($event['eventEnd']) ?></td>
-                    <td><?= htmlspecialchars($event['location']) ?></td>
-                    <td><?= htmlspecialchars($event['description']) ?></td>
+                    <td><?= htmlspecialchars($user['id']) ?></td>
+                    <td><?= htmlspecialchars($user['username']) ?></td>
+                    <td><?= htmlspecialchars($user['email']) ?></td>
+                    <td><?= htmlspecialchars($user['phone']) ?></td>
+                    <td><?= htmlspecialchars($user['name'] . ' ' . $user['lastName']) ?></td>
+                    <td><?= htmlspecialchars($user['role']) ?></td>
                     <td>
                         <form method="post">
-                            <input type="hidden" name="eventId" value="<?= htmlspecialchars($event['id']) ?>">
-                            <button type="submit" name="joinEvent">Rejoindre</button>
+                            <input type="hidden" name="deleteId" value="<?= $user['id'] ?>">
+                            <button type="submit">Delete</button>
                         </form>
                     </td>
                 </tr>

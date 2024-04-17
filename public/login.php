@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($response && isset($response['accessToken'])) {
         setcookie('Authorization', 'Bearer ' . $response['accessToken'], time() + 3600, '/');
         $_SESSION['username'] = $response['username'];
-        $_SESSION['roles'] = $response['roles'];
+        $_SESSION['role'] = $response['role'];
         header('Location: ../public/index.php');
         exit;
     } else {
