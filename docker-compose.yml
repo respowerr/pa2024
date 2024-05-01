@@ -1,0 +1,31 @@
+services:
+  web:
+    build: ./public
+    image: nginx
+    container_name: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./public:/usr/share/nginx/html
+  # environment:
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     - DB_HOST=${DB_HOST}
+  #     - DB_PORT=${DB_PORT}
+  #     - DB_DATABASE=${DB_DATABASE}
+  #     - DB_USERNAME=${DB_USERNAME}
+  #     - DB_PASSWORD=${DB_PASSWORD}
+
+  # db:
+  #   image: mysql
+  #   container_name: mysql_db
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: root_password
+  #     MYSQL_DATABASE: ${DB_DATABASE}
+  #     MYSQL_USER: ${DB_USERNAME}
+  #     MYSQL_PASSWORD: ${DB_PASSWORD}
+  #   ports:
+  #     - "3306:3306"
+  #   volumes:
+  #     - ./data:/var/lib/mysql
