@@ -6,24 +6,4 @@ services:
       context: ./web
       dockerfile: Dockerfile
     ports:
-      - "8080:80"
-
-  mysql:
-    image: mysql:latest
-    command: --default-authentication-plugin=caching_sha2_password
-    restart: always
-    environment:
-      MYSQL_DATABASE: 'account'
-      MYSQL_ROOT_PASSWORD: 'password'
-    volumes:
-      - /data:/var/lib/mysql
-    ports:
-      - "3306:3306"
-
-  # spring-app:
-  #   build:
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8080:8080"
-  #   depends_on:
-  #     - mysql
+      - "8089:80"
