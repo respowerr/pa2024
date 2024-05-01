@@ -1,6 +1,6 @@
 FROM nginx:latest
 
-WORKDIR /public
+WORKDIR .
 COPY . /usr/share/nginx/html
 
 EXPOSE 80
