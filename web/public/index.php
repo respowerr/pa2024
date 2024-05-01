@@ -13,7 +13,7 @@ if (isset($_GET['lang'])) {
     $language = 'fr'; 
 }
 
-$translations_file = "../Multilingue/lang/$language.json";
+$translations_file = "../multilingue/lang/$language.json";
 $translations = json_decode(file_get_contents($translations_file), true);
 
 $is_logged_in = isset($_SESSION['Authorization']) && !empty($_SESSION['Authorization']);
