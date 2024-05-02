@@ -1,7 +1,0 @@
-services:
-  web:
-    build: 
-      context: ./web
-      dockerfile: Dockerfile
-    ports:
-      - "8080:80"
