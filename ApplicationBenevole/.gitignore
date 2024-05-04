@@ -1,5 +1,6 @@
 *.iml
-.env
+app/src/main/res/xml/network_security_config.xml
+app/src/main/res/values/url.xml
 .gradle
 /local.properties
 /.idea/caches
