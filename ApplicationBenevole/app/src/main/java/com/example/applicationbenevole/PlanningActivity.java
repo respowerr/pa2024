@@ -1,5 +1,6 @@
 package com.example.applicationbenevole;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -17,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +35,7 @@ public class PlanningActivity extends AppCompatActivity {
 
     private final String logTag = "APP_BENEVOLE";
     private TextView planningTextView;
+    private TextView dateTextView;
     private RequestQueue queue;
     private String formattedDate;
     private Button previousDayButton;
@@ -46,9 +49,14 @@ public class PlanningActivity extends AppCompatActivity {
         Log.d(logTag, "onCreate: Planning created");
 
         planningTextView = findViewById(R.id.planningTextView);
+        dateTextView = findViewById(R.id.dateTextView);
         previousDayButton = findViewById(R.id.previousDayButton);
         nextDayButton = findViewById(R.id.nextDayButton);
         queue = Volley.newRequestQueue(this);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        formattedDate = dateFormat.format(new Date());
+        displayCurrentDate();
 
         String accessToken = getIntent().getStringExtra("access_token");
         if (accessToken != null && !accessToken.isEmpty()) {
@@ -56,38 +64,53 @@ public class PlanningActivity extends AppCompatActivity {
             fetchPlanningData(accessToken, formattedDate);
         } else {
             Log.e(logTag, "onCreate: Access token is empty or null");
-            Toast.makeText(PlanningActivity.this, "Erreur: Jeton d'accès non disponible", Toast.LENGTH_SHORT).show();
+            Toast.makeText(PlanningActivity.this, "Erreur: Access token is empty or null", Toast.LENGTH_SHORT).show();
         }
 
         previousDayButton.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DAY_OF_YEAR, -1);
-            Date previousDate = calendar.getTime();
+            try {
+                Date currentDate = dateFormat.parse(formattedDate);
+                calendar.setTime(currentDate);
+                calendar.add(Calendar.DAY_OF_YEAR, -1);
+                Date previousDate = calendar.getTime();
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-            formattedDate = dateFormat.format(previousDate);
-
-            fetchPlanningData(accessToken, formattedDate);
+                formattedDate = dateFormat.format(previousDate);
+                Log.d(logTag, "Previous Date: " + formattedDate);
+                fetchPlanningData(accessToken, formattedDate);
+                displayCurrentDate();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         });
 
         nextDayButton.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DAY_OF_YEAR, 1);
-            Date nextDate = calendar.getTime();
+            try {
+                Date currentDate = dateFormat.parse(formattedDate);
+                calendar.setTime(currentDate);
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+                Date nextDate = calendar.getTime();
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-            formattedDate = dateFormat.format(nextDate);
-
-            fetchPlanningData(accessToken, formattedDate);
+                formattedDate = dateFormat.format(nextDate);
+                Log.d(logTag, "Next Date: " + formattedDate);
+                fetchPlanningData(accessToken, formattedDate);
+                displayCurrentDate();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         });
-
-
     }
 
 
+    @SuppressLint("SetTextI18n")
+    private void displayCurrentDate() {
+        dateTextView.setText("Date: " + formattedDate);
+
+    }
 
     private void fetchPlanningData(String accessToken, String formattedDate) {
-        Log.d(logTag, "fetchPlanningData: Fetching planning data...");
+        Log.d(logTag, "fetchPlanningData: Fetching planning data for date: " + formattedDate);
 
         String url = getResources().getString(R.string.server_url_activity) + "?date=" + formattedDate;
 
@@ -113,8 +136,9 @@ public class PlanningActivity extends AppCompatActivity {
         };
 
         queue.add(jsonArrayRequest);
-    }
 
+        this.formattedDate = formattedDate;
+    }
 
 
     private List<String> parsePlanningResponse(JSONArray response) {
@@ -122,19 +146,23 @@ public class PlanningActivity extends AppCompatActivity {
         try {
             for (int i = 0; i < response.length(); i++) {
                 JSONObject event = response.getJSONObject(i);
-                String eventName = event.getString("eventName");
-                String eventType = event.getString("eventType");
-                String eventStart = event.getString("eventStart");
-                String eventEnd = event.getString("eventEnd");
-                String location = event.getString("location");
-                String description = event.getString("description");
-                String eventDetails = "Nom: " + eventName + "\n" +
-                        "Type: " + eventType + "\n" +
-                        "Début: " + eventStart + "\n" +
-                        "Fin: " + eventEnd + "\n" +
-                        "Lieu: " + location + "\n" +
-                        "Description: " + description;
-                planningList.add(eventDetails);
+                String eventDate = event.getString("eventStart");
+
+                if (eventDate.equals(formattedDate)) {
+                    String eventName = event.getString("eventName");
+                    String eventType = event.getString("eventType");
+                    String eventStart = event.getString("eventStart");
+                    String eventEnd = event.getString("eventEnd");
+                    String location = event.getString("location");
+                    String description = event.getString("description");
+                    String eventDetails = "Nom: " + eventName + "\n" +
+                            "Type: " + eventType + "\n" +
+                            "Début: " + eventStart + "\n" +
+                            "Fin: " + eventEnd + "\n" +
+                            "Lieu: " + location + "\n" +
+                            "Description: " + description;
+                    planningList.add(eventDetails);
+                }
             }
         } catch (JSONException e) {
             Log.e(logTag, "Erreur de la récuperation du JSON:" + Arrays.toString(e.getStackTrace()));
@@ -144,11 +172,15 @@ public class PlanningActivity extends AppCompatActivity {
 
 
     private void displayPlanning(List<String> planningList) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String event : planningList) {
-            stringBuilder.append(event).append("\n");
+        if (planningList.isEmpty()) {
+            planningTextView.setText("Aucun événement prévu pour ce jour");
+        } else {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (String event : planningList) {
+                stringBuilder.append(event).append("\n");
+            }
+            planningTextView.setText(stringBuilder.toString());
         }
-        planningTextView.setText(stringBuilder.toString());
     }
 
 }

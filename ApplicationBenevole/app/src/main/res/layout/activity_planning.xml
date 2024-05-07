@@ -1,52 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
+    android:orientation="vertical"
     tools:context=".PlanningActivity">
 
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <Button
+            android:id="@+id/previousDayButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Jour précédent"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="0.5"
+            android:layout_marginBottom="16dp"/>
 
-    <Button
-        android:id="@+id/previousDayButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Jour précédent"
-        android:layout_above="@id/planningTextView"
-        android:layout_alignParentStart="true"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"/>
+        <Button
+            android:id="@+id/nextDayButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Jour suivant"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="8dp"
+            android:layout_weight="0.5"
+            android:layout_marginBottom="16dp"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/dateTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/planningTextView"
-        android:layout_centerInParent="true"
+        android:layout_gravity="center"
         android:layout_marginBottom="27dp"
         android:text="Date:"
         android:textSize="18sp"
         android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/nextDayButton"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/pTextView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Jour suivant"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="8dp"
+        android:text="Planning:"
+        android:textSize="18sp"
+        android:textStyle="bold"
         android:layout_marginBottom="16dp"/>
 
     <TextView
         android:id="@+id/planningTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/nextDayButton"
         android:text="Planning:"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginBottom="16dp"/>
 
-
-
-</RelativeLayout>
+</LinearLayout>
