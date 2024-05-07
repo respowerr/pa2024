@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
     private final String logTag = "APP_BENEVOLE";
     private SharedPreferences sharedPreferences;
     private Button loginButton;
+    private boolean isLoggedIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         sharedPreferences = getSharedPreferences("user_session", MODE_PRIVATE);
+        isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false);
 
         TextView welcomeTextView = findViewById(R.id.welcomeTextView);
         loginButton = findViewById(R.id.loginButton);
@@ -29,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
         Button profileButton = findViewById(R.id.profileButton);
         Button activitiesButton = findViewById(R.id.activitiesButton);
 
-        boolean isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false);
         updateLoginButton(isLoggedIn);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -52,12 +53,12 @@ public class MainActivity extends AppCompatActivity {
             Log.d(logTag, "Access token non trouvé dans l'intent");
         }
 
-        planningButton.setOnClickListener(new View.OnClickListener() {
+        activitiesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String accessToken = getIntent().getStringExtra("access_token");
                 if (accessToken != null) {
-                    Intent intent = new Intent(MainActivity.this, PlanningActivity.class);
+                    Intent intent = new Intent(MainActivity.this, ActivitiesActivity.class);
                     intent.putExtra("access_token", accessToken);
                     Log.d(logTag, accessToken);
                     startActivity(intent);
@@ -72,21 +73,35 @@ public class MainActivity extends AppCompatActivity {
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isLoggedIn) {
-                    startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                String accessToken = getIntent().getStringExtra("access_token");
+                int userId = getIntent().getIntExtra("user_id", 0);
+                if (accessToken != null && userId != 0) {
+                    Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                    intent.putExtra("access_token", accessToken);
+                    intent.putExtra("user_id", userId);
+                    Log.w(logTag, String.valueOf(userId));
+                    startActivity(intent);
                 } else {
                     Toast.makeText(MainActivity.this, "Vous devez vous connecter pour accéder au profil.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        activitiesButton.setOnClickListener(new View.OnClickListener() {
+
+
+        planningButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isLoggedIn) {
-                    startActivity(new Intent(MainActivity.this, ActivitiesActivity.class));
+                String accessToken = getIntent().getStringExtra("access_token");
+                int userId = getIntent().getIntExtra("user_id", 0);
+                if (accessToken != null && userId != 0) {
+                    Intent intent = new Intent(MainActivity.this, PlanningActivity.class);
+                    intent.putExtra("access_token", accessToken);
+                    intent.putExtra("user_id", userId);
+                    Log.w(logTag, String.valueOf(userId));
+                    startActivity(intent);
                 } else {
-                    Toast.makeText(MainActivity.this, "Vous devez vous connecter pour accéder aux activités.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Vous devez vous connecter pour accéder au profil.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -104,7 +119,10 @@ public class MainActivity extends AppCompatActivity {
     private void logoutUser() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove("is_logged_in");
+        editor.remove("access_token");
         editor.apply();
-        updateLoginButton(false);
+        boolean isLoggedIn = false;
+        updateLoginButton(isLoggedIn);
     }
+
 }

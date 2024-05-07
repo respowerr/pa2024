@@ -2,6 +2,7 @@ package com.example.applicationbenevole;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,10 +17,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -29,35 +34,62 @@ public class PlanningActivity extends AppCompatActivity {
     private final String logTag = "APP_BENEVOLE";
     private TextView planningTextView;
     private RequestQueue queue;
+    private String formattedDate;
+    private Button previousDayButton;
+    private Button nextDayButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_planning);
 
-        Log.d(logTag, "onCreate: Activity created");
+        Log.d(logTag, "onCreate: Planning created");
 
         planningTextView = findViewById(R.id.planningTextView);
-
-        // Initialise la RequestQueue
+        previousDayButton = findViewById(R.id.previousDayButton);
+        nextDayButton = findViewById(R.id.nextDayButton);
         queue = Volley.newRequestQueue(this);
 
         String accessToken = getIntent().getStringExtra("access_token");
         if (accessToken != null && !accessToken.isEmpty()) {
             Log.d(logTag, "onCreate: Access token received: " + accessToken);
-            fetchPlanningData(accessToken);
+            fetchPlanningData(accessToken, formattedDate);
         } else {
             Log.e(logTag, "onCreate: Access token is empty or null");
             Toast.makeText(PlanningActivity.this, "Erreur: Jeton d'accès non disponible", Toast.LENGTH_SHORT).show();
         }
+
+        previousDayButton.setOnClickListener(v -> {
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_YEAR, -1);
+            Date previousDate = calendar.getTime();
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+            formattedDate = dateFormat.format(previousDate);
+
+            fetchPlanningData(accessToken, formattedDate);
+        });
+
+        nextDayButton.setOnClickListener(v -> {
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+            Date nextDate = calendar.getTime();
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+            formattedDate = dateFormat.format(nextDate);
+
+            fetchPlanningData(accessToken, formattedDate);
+        });
+
+
     }
 
 
 
-    private void fetchPlanningData(String accessToken) {
+    private void fetchPlanningData(String accessToken, String formattedDate) {
         Log.d(logTag, "fetchPlanningData: Fetching planning data...");
 
-        String url = getResources().getString(R.string.server_url_planning);
+        String url = getResources().getString(R.string.server_url_activity) + "?date=" + formattedDate;
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 response -> {
@@ -82,6 +114,7 @@ public class PlanningActivity extends AppCompatActivity {
 
         queue.add(jsonArrayRequest);
     }
+
 
 
     private List<String> parsePlanningResponse(JSONArray response) {
@@ -119,4 +152,3 @@ public class PlanningActivity extends AppCompatActivity {
     }
 
 }
-

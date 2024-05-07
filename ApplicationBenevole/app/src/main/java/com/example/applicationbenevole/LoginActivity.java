@@ -69,10 +69,11 @@ public class LoginActivity extends AppCompatActivity {
                     try {
                         Log.d(logTag, "response du serveur: " + response);
                         String accessToken = response.getString("accessToken");
+                        int userId = Integer.parseInt(response.getString("id"));
                         if (!TextUtils.isEmpty(accessToken)) {
                             Log.i(logTag, "Connexion réussie");
                             saveUserSession();
-                            openMainActivity(accessToken);
+                            openMainActivity(accessToken, userId);
                             Toast.makeText(LoginActivity.this, "Connexion réussie", Toast.LENGTH_SHORT).show();
                             finish();
                         } else {
@@ -109,9 +110,10 @@ public class LoginActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    private void openMainActivity(String accessToken) {
+    private void openMainActivity(String accessToken, int userId) {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.putExtra("access_token", accessToken);
+        intent.putExtra("user_id", userId);
         Log.w(logTag, String.valueOf(intent));
         startActivity(intent);
     }

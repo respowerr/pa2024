@@ -6,12 +6,47 @@
     android:padding="16dp"
     tools:context=".PlanningActivity">
 
+
+    <Button
+        android:id="@+id/previousDayButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jour précédent"
+        android:layout_above="@id/planningTextView"
+        android:layout_alignParentStart="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:id="@+id/dateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/planningTextView"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="27dp"
+        android:text="Date:"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/nextDayButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jour suivant"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="16dp"/>
+
     <TextView
         android:id="@+id/planningTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/nextDayButton"
         android:text="Planning:"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
+
+
 
 </RelativeLayout>
