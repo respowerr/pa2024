@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <Button
+        android:id="@+id/nfcButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="10dp"
+        android:text="NFC" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/scanQrCodeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Scan QrCode"
+            android:layout_marginStart="8dp"/>
+        <Button
+            android:id="@+id/genQrCodeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Generate QrCode"
+            android:layout_marginStart="8dp"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/welcomeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bienvenue sur l'application d'Au Temps Donné!"
+        android:layout_marginTop="100dp"/>
+
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Se connecter"
+        android:layout_marginTop="50dp"/>
+
+    <Button
+        android:id="@+id/planningButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Voir le planning"
+        android:layout_marginTop="20dp"/>
+
+    <Button
+        android:id="@+id/activitiesButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Voir mes activités"
+        android:layout_marginTop="20dp"/>
+
+    <Button
+        android:id="@+id/profileButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Voir mon profil"
+        android:layout_marginTop="20dp"/>
+
+
+</LinearLayout>
