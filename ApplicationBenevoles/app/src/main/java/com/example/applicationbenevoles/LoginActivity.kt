@@ -72,7 +72,7 @@ class LoginActivity : AppCompatActivity() {
                     if (accessToken.isNotEmpty()) {
                         Log.i(logTag, "Connexion réussie")
                         saveUserSession()
-                        openMainActivity(accessToken, userId, userRole)
+                        openMainActivity(username, password, accessToken, userId, userRole)
                         Toast.makeText(this@LoginActivity, "Connexion réussie", Toast.LENGTH_SHORT)
                             .show()
                         finish()
@@ -116,11 +116,14 @@ class LoginActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    private fun openMainActivity(accessToken: String, userId: Int, userRole: String) {
+    private fun openMainActivity(username: String, password: String, accessToken: String, userId: Int, userRole: String) {
         val intent = Intent(this@LoginActivity, MainActivity::class.java)
+        intent.putExtra("username", username)
+        intent.putExtra("password", password)
         intent.putExtra("access_token", accessToken)
         intent.putExtra("user_id", userId)
         intent.putExtra("user_role", userRole)
+        Log.d(logTag, userRole)
         Log.w(logTag, intent.toString())
         startActivity(intent)
     }

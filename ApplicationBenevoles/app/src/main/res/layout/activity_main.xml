@@ -5,13 +5,23 @@
     android:orientation="vertical"
     android:gravity="center">
 
-    <Button
-        android:id="@+id/nfcButton"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="10dp"
-        android:text="NFC" />
+        android:orientation="horizontal"
+        android:gravity="center">
+        <Button
+            android:id="@+id/readNfcButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Read NFC" />
+        <Button
+            android:id="@+id/writeNfcButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+            android:text="Write NFC" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,16 +40,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Generate QrCode"
-            android:layout_marginStart="8dp"/>
+            android:layout_marginStart="10dp"/>
 
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/logo"
+        android:layout_marginTop="20dp"/>
 
     <TextView
         android:id="@+id/welcomeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Bienvenue sur l'application d'Au Temps Donné!"
-        android:layout_marginTop="100dp"/>
+        android:layout_marginTop="20dp"/>
 
     <Button
         android:id="@+id/loginButton"

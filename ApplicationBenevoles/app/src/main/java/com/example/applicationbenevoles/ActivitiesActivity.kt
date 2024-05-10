@@ -1,5 +1,6 @@
 package com.example.applicationbenevoles
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -14,6 +15,9 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONArray
 import org.json.JSONException
+import org.json.JSONObject
+
+data class Event(val id: Int, val details: String)
 
 class ActivitiesActivity : AppCompatActivity() {
 
@@ -21,7 +25,8 @@ class ActivitiesActivity : AppCompatActivity() {
     private lateinit var activityTextView: TextView
     private lateinit var queue: RequestQueue
     private lateinit var accessToken: String
-
+    private lateinit var username: String
+    private lateinit var password: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +39,10 @@ class ActivitiesActivity : AppCompatActivity() {
         queue = Volley.newRequestQueue(this)
 
         accessToken = intent.getStringExtra("access_token").toString()
-        if (!accessToken.isNullOrBlank()) {
+        username = intent.getStringExtra("username").toString()
+        password = intent.getStringExtra("password").toString()
+
+        if (accessToken.isNotBlank()) {
             Log.d(logTag, "onCreate: Access token received: $accessToken")
             fetchActivityData(accessToken)
         } else {
@@ -44,7 +52,9 @@ class ActivitiesActivity : AppCompatActivity() {
                 "Erreur: Jeton d'accès non disponible",
                 Toast.LENGTH_SHORT
             ).show()
+            redirectToMainActivity()
         }
+
     }
 
     private fun fetchActivityData(accessToken: String) {
@@ -75,11 +85,13 @@ class ActivitiesActivity : AppCompatActivity() {
         queue.add(jsonArrayRequest)
     }
 
-    private fun parseActivityResponse(response: JSONArray): List<String> {
-        val activityList = mutableListOf<String>()
+
+    private fun parseActivityResponse(response: JSONArray): List<Event> {
+        val activityList = mutableListOf<Event>()
         try {
             for (i in 0 until response.length()) {
                 val event = response.getJSONObject(i)
+                val eventId = event.getInt("id")
                 val eventName = event.getString("eventName")
                 val eventType = event.getString("eventType")
                 val eventStart = event.getString("eventStart")
@@ -92,67 +104,66 @@ class ActivitiesActivity : AppCompatActivity() {
                         "Fin: $eventEnd\n" +
                         "Lieu: $location\n" +
                         "Description: $description\n\n"
-                activityList.add(eventDetails)
+                activityList.add(Event(eventId, eventDetails))
             }
         } catch (e: JSONException) {
-            Log.e(logTag, "Erreur de la récuperation du JSON: ${e.stackTraceToString()}")
+            Log.e(logTag, "Erreur de la récupération du JSON: ${e.stackTraceToString()}")
         }
         return activityList
     }
 
-    private fun displayActivity(activityList: List<String>) {
+
+    private fun displayActivity(activityList: List<Event>) {
         val activityContainer = findViewById<LinearLayout>(R.id.activityContainer)
         activityContainer.removeAllViews()
 
-        for (activity in activityList) {
+        for (event in activityList) {
             val activityView = TextView(this)
-            activityView.text = activity
+            activityView.text = event.details
             activityContainer.addView(activityView)
 
-            val eventId = extractEventId(activity)
-            val eventIdTextView = TextView(this)
-            eventIdTextView.text = "ID de l'activité: $eventId"
-            activityContainer.addView(eventIdTextView)
+            val eventId = event.id
 
             val joinButton = Button(this)
             joinButton.text = "Rejoindre"
             joinButton.setOnClickListener {
-                joinEvent(eventId, accessToken)
+                joinEvent(eventId)
             }
             activityContainer.addView(joinButton)
 
             val quitButton = Button(this)
             quitButton.text = "Quitter"
             quitButton.setOnClickListener {
-                quitEvent(eventId, accessToken)
+                quitEvent(eventId)
             }
             activityContainer.addView(quitButton)
         }
     }
 
-
-
-    private fun extractEventId(activity: String): Int {
-        val regex = Regex("\\d+")
-        val matchResult = regex.find(activity)
-        val eventIdString = matchResult?.value
-        Log.d(logTag, "extractEventId: Extracted event ID string: $eventIdString")
-        return eventIdString?.toIntOrNull() ?: -1
+    private fun redirectToMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
+    private fun joinEvent(eventId: Int) {
+        val url = "${resources.getString(R.string.server_url_activity)}/$eventId/join"
 
-    private fun joinEvent(eventId: Int, accessToken: String) {
-        Log.d(logTag, "joinEvent: Joining event with ID: $eventId")
-        val url = resources.getString(R.string.server_url_activity) + "/" + eventId + "/join"
+        val userObject = JSONObject()
+        userObject.put("username", username)
 
-        val jsonObjectRequest = object : JsonObjectRequest(Method.POST, url, null,
-            { _ ->
-                Log.d(logTag, "joinEvent: Successfully joined event with ID: $eventId")
-                Toast.makeText(this@ActivitiesActivity, "Inscription réussie à l'événement", Toast.LENGTH_SHORT).show()
+        val jsonObjectRequest = object : JsonObjectRequest(Method.POST, url, userObject,
+            { response ->
+                Toast.makeText(
+                    this@ActivitiesActivity,
+                    response.getString("message"),
+                    Toast.LENGTH_SHORT
+                ).show()
+                fetchActivityData(accessToken)
             },
             { error ->
-                val errorMessage = "Erreur lors de l'inscription à l'événement: " + error.message
-                Log.e(logTag, "joinEvent: $errorMessage")
+                val errorMessage = "Error: " + error.message
+                Log.e(logTag, "joinEvent: Error joining event: $errorMessage")
                 Toast.makeText(this@ActivitiesActivity, errorMessage, Toast.LENGTH_SHORT).show()
             }
         ) {
@@ -166,18 +177,25 @@ class ActivitiesActivity : AppCompatActivity() {
         queue.add(jsonObjectRequest)
     }
 
-    private fun quitEvent(eventId: Int, accessToken: String) {
-        Log.d(logTag, "quitEvent: Quitting event with ID: $eventId")
-        val url = resources.getString(R.string.server_url_activity) + "/" + eventId + "/quit"
 
-        val jsonObjectRequest = object : JsonObjectRequest(Method.DELETE, url, null,
-            { _ ->
-                Log.d(logTag, "quitEvent: Successfully quit event with ID: $eventId")
-                Toast.makeText(this@ActivitiesActivity, "Désinscription réussie de l'événement", Toast.LENGTH_SHORT).show()
+    private fun quitEvent(eventId: Int) {
+        val url = "${resources.getString(R.string.server_url_activity)}/$eventId/quit"
+
+        val userObject = JSONObject()
+        userObject.put("username", username)
+
+        val jsonObjectRequest = object : JsonObjectRequest(Method.DELETE, url, userObject,
+            { response ->
+                Toast.makeText(
+                    this@ActivitiesActivity,
+                    response.getString("message"),
+                    Toast.LENGTH_SHORT
+                ).show()
+                fetchActivityData(accessToken)
             },
             { error ->
-                val errorMessage = "Erreur lors de la désinscription de l'événement: " + error.message
-                Log.e(logTag, "quitEvent: $errorMessage")
+                val errorMessage = "Error: " + error.message
+                Log.e(logTag, "quitEvent: Error quitting event: $errorMessage")
                 Toast.makeText(this@ActivitiesActivity, errorMessage, Toast.LENGTH_SHORT).show()
             }
         ) {
@@ -190,6 +208,5 @@ class ActivitiesActivity : AppCompatActivity() {
 
         queue.add(jsonObjectRequest)
     }
-
 
 }
