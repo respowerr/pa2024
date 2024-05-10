@@ -43,9 +43,11 @@ class PlanningActivity : AppCompatActivity() {
         displayCurrentDate()
 
         val accessToken = intent.getStringExtra("access_token")
+        val hasJoined = intent.getBooleanExtra("hasJoined", false)
+
         if (!accessToken.isNullOrEmpty()) {
             Log.d(logTag, "onCreate: Access token received: $accessToken")
-            fetchPlanningData(accessToken, formattedDate)
+            fetchPlanningData(accessToken, formattedDate, hasJoined)
         } else {
             Log.e(logTag, "onCreate: Access token is empty or null")
             Toast.makeText(this@PlanningActivity, "Erreur: Access token is empty or null", Toast.LENGTH_SHORT).show()
@@ -63,7 +65,7 @@ class PlanningActivity : AppCompatActivity() {
 
                 formattedDate = dateFormat.format(previousDate)
                 Log.d(logTag, "Previous Date: $formattedDate")
-                fetchPlanningData(accessToken, formattedDate)
+                fetchPlanningData(accessToken, formattedDate, hasJoined)
                 displayCurrentDate()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -82,7 +84,7 @@ class PlanningActivity : AppCompatActivity() {
 
                 formattedDate = dateFormat.format(nextDate)
                 Log.d(logTag, "Next Date: $formattedDate")
-                fetchPlanningData(accessToken, formattedDate)
+                fetchPlanningData(accessToken, formattedDate, hasJoined)
                 displayCurrentDate()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -95,7 +97,7 @@ class PlanningActivity : AppCompatActivity() {
         dateTextView.text = "Date: $formattedDate"
     }
 
-    private fun fetchPlanningData(accessToken: String?, formattedDate: String) {
+    private fun fetchPlanningData(accessToken: String?, formattedDate: String, hasJoined: Boolean) {
         Log.d(logTag, "fetchPlanningData: Fetching planning data for date: $formattedDate")
 
         val url = resources.getString(R.string.server_url_activity) + "?date=$formattedDate"
@@ -104,7 +106,7 @@ class PlanningActivity : AppCompatActivity() {
             { response ->
                 Log.d(logTag, "fetchPlanningData: Planning data fetched successfully")
                 val planningList = parsePlanningResponse(response)
-                displayPlanning(planningList)
+                displayPlanning(planningList, hasJoined)
             },
             { error ->
                 val errorMessage = "Error: " + error.message
@@ -154,15 +156,23 @@ class PlanningActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun displayPlanning(planningList: List<String>) {
+    private fun displayPlanning(planningList: List<String>, hasJoined: Boolean) {
+        Log.w(logTag, "$hasJoined")
         if (planningList.isEmpty()) {
             planningTextView.text = "Aucun événement prévu pour ce jour"
         } else {
             val stringBuilder = StringBuilder()
             for (event in planningList) {
-                stringBuilder.append(event).append("\n")
+                val formattedEvent = if (hasJoined) {
+                    "$event\n\nVous êtes inscrit à cette activité"
+                } else {
+                    event
+                }
+                stringBuilder.append(formattedEvent).append("\n")
             }
             planningTextView.text = stringBuilder.toString()
         }
     }
+
+
 }
