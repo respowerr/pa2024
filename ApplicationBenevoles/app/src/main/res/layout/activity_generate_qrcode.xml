@@ -11,14 +11,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"/>
 
-    <EditText
-        android:id="@+id/editText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:autofillHints=""
-        android:hint="Entrez le texte pour générer le code QR"
-        android:layout_margin="16dp"
-        android:inputType="text"/>
 
     <Button
         android:id="@+id/generateButton"
