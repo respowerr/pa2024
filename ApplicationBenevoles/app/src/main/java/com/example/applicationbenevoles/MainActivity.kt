@@ -17,21 +17,22 @@ class MainActivity : AppCompatActivity() {
     private var accessToken: String? = null
     private var username: String? = null
     private var password: String? = null
+    private var userId: Int = 0
+    private var hasJoined: Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        accessToken = savedInstanceState?.getString("access_token")
-        username = savedInstanceState?.getString("username")
-        password = savedInstanceState?.getString("password")
-
         sharedPreferences = getSharedPreferences("user_session", MODE_PRIVATE)
+
         isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
-        val userRole = sharedPreferences.getString("user_role", "")
-        if (userRole != null) {
-            Log.i(logTag, userRole)
-        }
+        accessToken = sharedPreferences.getString("access_token", null)
+        username = sharedPreferences.getString("username", null)
+        password = sharedPreferences.getString("password", null)
+        userId = sharedPreferences.getInt("user_id", 0)
+        hasJoined = sharedPreferences.getBoolean("hasJoined", false)
 
         loginButton = findViewById(R.id.loginButton)
         val planningButton: Button = findViewById(R.id.planningButton)
@@ -42,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         val readNfcButton: Button = findViewById(R.id.readNfcButton)
         val writeNfcButton: Button = findViewById(R.id.writeNfcButton)
 
-        updateLoginButton(isLoggedIn)
+        updateLoginButton()
 
         loginButton.setOnClickListener {
             if (isLoggedIn) {
@@ -52,23 +53,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
         activitiesButton.setOnClickListener {
-            val username = intent.getStringExtra("username")
-            val password = intent.getStringExtra("password")
-            val accessToken = intent.getStringExtra("access_token")
             if (accessToken != null) {
                 val intent = Intent(this@MainActivity, ActivitiesActivity::class.java)
                 intent.putExtra("username", username)
                 intent.putExtra("password", password)
                 intent.putExtra("access_token", accessToken)
-                if (username != null) {
-                    Log.d(logTag, username)
-                }
-                if (password != null) {
-                    Log.d(logTag, password)
-                }
-                Log.d(logTag, accessToken)
                 startActivity(intent)
             } else {
                 Toast.makeText(
@@ -80,13 +70,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         profileButton.setOnClickListener {
-            val accessToken = intent.getStringExtra("access_token")
-            val userId = intent.getIntExtra("user_id", 0)
             if (accessToken != null && userId != 0) {
                 val intent = Intent(this@MainActivity, ProfileActivity::class.java)
                 intent.putExtra("access_token", accessToken)
                 intent.putExtra("user_id", userId)
-                Log.w(logTag, userId.toString())
                 startActivity(intent)
             } else {
                 Toast.makeText(
@@ -98,13 +85,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         planningButton.setOnClickListener {
-            val accessToken = intent.getStringExtra("access_token")
-            val userId = intent.getIntExtra("user_id", 0)
             if (accessToken != null && userId != 0) {
                 val intent = Intent(this@MainActivity, PlanningActivity::class.java)
                 intent.putExtra("access_token", accessToken)
                 intent.putExtra("user_id", userId)
-                Log.w(logTag, userId.toString())
                 startActivity(intent)
             } else {
                 Toast.makeText(
@@ -116,13 +100,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         readNfcButton.setOnClickListener {
-            val accessToken = intent.getStringExtra("access_token")
-            val userId = intent.getIntExtra("user_id", 0)
             if (accessToken != null && userId != 0) {
                 val intent = Intent(this@MainActivity, ReadNfcActivity::class.java)
                 intent.putExtra("access_token", accessToken)
                 intent.putExtra("user_id", userId)
-                Log.w(logTag, userId.toString())
                 startActivity(intent)
             } else {
                 Toast.makeText(
@@ -137,9 +118,7 @@ class MainActivity : AppCompatActivity() {
             var userRole = intent.getStringExtra("user_role") ?: "ROLE_USER"
             userRole = userRole.replace("[", "").replace("]", "").replace("\"", "")
 
-            Log.w(logTag, "UserRole: $userRole")
             if (userRole.equals("ROLE_ADMIN", ignoreCase = true)) {
-                Log.d(logTag, userRole)
                 val intent = Intent(this@MainActivity, WriteNfcActivity::class.java)
                 intent.putExtra("user_role", userRole)
                 startActivity(intent)
@@ -153,13 +132,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         scanQrCodeButton.setOnClickListener {
-            val accessToken = intent.getStringExtra("access_token")
-            val userId = intent.getIntExtra("user_id", 0)
             if (accessToken != null && userId != 0) {
                 val intent = Intent(this@MainActivity, ScanQRCodeActivity::class.java)
                 intent.putExtra("access_token", accessToken)
                 intent.putExtra("user_id", userId)
-                Log.w(logTag, userId.toString())
                 startActivity(intent)
             } else {
                 Toast.makeText(
@@ -171,13 +147,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         genQrCodeButton.setOnClickListener {
-            val accessToken = intent.getStringExtra("access_token")
             var userRole = intent.getStringExtra("user_role") ?: "ROLE_USER"
             userRole = userRole.replace("[", "").replace("]", "").replace("\"", "")
 
-            Log.w(logTag, "UserRole: $userRole")
             if (userRole.equals("ROLE_ADMIN", ignoreCase = true)) {
-                Log.d(logTag, userRole)
                 val intent = Intent(this@MainActivity, GenerateQRCodeActivity::class.java)
                 intent.putExtra("access_token", accessToken)
                 intent.putExtra("user_role", userRole)
@@ -196,20 +169,28 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
         accessToken = sharedPreferences.getString("access_token", null)
-        updateLoginButton(isLoggedIn)
+        username = sharedPreferences.getString("username", null)
+        password = sharedPreferences.getString("password", null)
+        userId = sharedPreferences.getInt("user_id", 0)
+        updateLoginButton()
     }
 
-    private fun updateLoginButton(isLoggedIn: Boolean) {
+
+    private fun updateLoginButton() {
+        isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
         loginButton.text = if (isLoggedIn) "Se déconnecter" else "Se connecter"
     }
 
     private fun logoutUser() {
-        val editor: SharedPreferences.Editor = sharedPreferences.edit()
-        editor.remove("is_logged_in")
-        editor.remove("access_token")
-        editor.remove("user_role")
-        editor.apply()
-        isLoggedIn = false
-        updateLoginButton(isLoggedIn)
+        sharedPreferences.edit().apply {
+            remove("is_logged_in")
+            remove("access_token")
+            remove("username")
+            remove("password")
+            remove("user_id")
+            remove("hasJoined")
+            apply()
+        }
+        updateLoginButton()
     }
 }

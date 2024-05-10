@@ -32,7 +32,8 @@ class LoginActivity : AppCompatActivity() {
         passwordEditText = findViewById(R.id.passwordEditText)
         val loginButton: Button = findViewById(R.id.loginButton)
 
-        loginButton.setOnClickListener { loginUser() }
+        loginButton.setOnClickListener {
+            loginUser() }
     }
 
     private fun loginUser() {
@@ -71,12 +72,12 @@ class LoginActivity : AppCompatActivity() {
                     val userRole = response.getString("roles")
                     if (accessToken.isNotEmpty()) {
                         Log.i(logTag, "Connexion réussie")
-                        saveUserSession()
+                        saveUserSession(accessToken, username, password, userId)
                         openMainActivity(username, password, accessToken, userId, userRole)
-                        Toast.makeText(this@LoginActivity, "Connexion réussie", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(this@LoginActivity, "Connexion réussie", Toast.LENGTH_SHORT).show()
                         finish()
-                    } else {
+                    }
+                    else {
                         Toast.makeText(
                             this@LoginActivity,
                             "Erreur de login. Veuillez réessayer",
@@ -108,13 +109,18 @@ class LoginActivity : AppCompatActivity() {
         queue.add(jsonObjectRequest)
     }
 
-    private fun saveUserSession() {
-        val sharedPref: SharedPreferences =
-            getSharedPreferences("user_session", Context.MODE_PRIVATE)
+    private fun saveUserSession(accessToken: String, username: String, password: String, userId: Int) {
+        val sharedPref: SharedPreferences = getSharedPreferences("user_session", Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPref.edit()
         editor.putBoolean("is_logged_in", true)
+        editor.putString("access_token", accessToken)
+        editor.putString("username", username)
+        editor.putString("password", password)
+        editor.putInt("user_id", userId)
         editor.apply()
     }
+
+
 
     private fun openMainActivity(username: String, password: String, accessToken: String, userId: Int, userRole: String) {
         val intent = Intent(this@LoginActivity, MainActivity::class.java)
