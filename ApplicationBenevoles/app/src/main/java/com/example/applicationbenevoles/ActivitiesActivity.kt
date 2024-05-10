@@ -149,10 +149,12 @@ class ActivitiesActivity : AppCompatActivity() {
     private fun joinEvent(eventId: Int) {
         val url = "${resources.getString(R.string.server_url_activity)}/$eventId/join"
 
-        val userObject = JSONObject()
-        userObject.put("username", username)
+        val jsonObject = JSONObject().apply {
+            put("username", username)
+        }
+        Log.w(logTag, "$jsonObject")
 
-        val jsonObjectRequest = object : JsonObjectRequest(Method.POST, url, userObject,
+        val jsonObjectRequest = object : JsonObjectRequest(Method.POST, url, jsonObject,
             { response ->
                 Toast.makeText(
                     this@ActivitiesActivity,
@@ -181,10 +183,12 @@ class ActivitiesActivity : AppCompatActivity() {
     private fun quitEvent(eventId: Int) {
         val url = "${resources.getString(R.string.server_url_activity)}/$eventId/quit"
 
-        val userObject = JSONObject()
-        userObject.put("username", username)
+        val jsonObject = JSONObject().apply {
+            put("username", username)
+        }
+        Log.w(logTag, "$jsonObject")
 
-        val jsonObjectRequest = object : JsonObjectRequest(Method.DELETE, url, userObject,
+        val jsonObjectRequest = object : JsonObjectRequest(Method.DELETE, url, null,
             { response ->
                 Toast.makeText(
                     this@ActivitiesActivity,
@@ -195,7 +199,7 @@ class ActivitiesActivity : AppCompatActivity() {
             },
             { error ->
                 val errorMessage = "Error: " + error.message
-                Log.e(logTag, "quitEvent: Error quitting event: $errorMessage")
+                Log.e(logTag, "joinEvent: Error joining event: $errorMessage")
                 Toast.makeText(this@ActivitiesActivity, errorMessage, Toast.LENGTH_SHORT).show()
             }
         ) {

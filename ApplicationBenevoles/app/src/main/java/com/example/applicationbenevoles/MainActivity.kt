@@ -171,6 +171,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         genQrCodeButton.setOnClickListener {
+            val accessToken = intent.getStringExtra("access_token")
             var userRole = intent.getStringExtra("user_role") ?: "ROLE_USER"
             userRole = userRole.replace("[", "").replace("]", "").replace("\"", "")
 
@@ -178,6 +179,7 @@ class MainActivity : AppCompatActivity() {
             if (userRole.equals("ROLE_ADMIN", ignoreCase = true)) {
                 Log.d(logTag, userRole)
                 val intent = Intent(this@MainActivity, GenerateQRCodeActivity::class.java)
+                intent.putExtra("access_token", accessToken)
                 intent.putExtra("user_role", userRole)
                 startActivity(intent)
             } else {
