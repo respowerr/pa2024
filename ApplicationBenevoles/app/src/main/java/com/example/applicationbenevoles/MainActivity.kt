@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +21,13 @@ class MainActivity : AppCompatActivity() {
     private var userId: Int = 0
     private var hasJoined: Boolean = false
 
+    private lateinit var planningButton: Button
+    private lateinit var profileButton: Button
+    private lateinit var activitiesButton: Button
+    private lateinit var genQrCodeButton: Button
+    private lateinit var scanQrCodeButton: Button
+    private lateinit var writeNfcButton: Button
+    private lateinit var readNfcButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,13 +43,13 @@ class MainActivity : AppCompatActivity() {
         hasJoined = sharedPreferences.getBoolean("hasJoined", false)
 
         loginButton = findViewById(R.id.loginButton)
-        val planningButton: Button = findViewById(R.id.planningButton)
-        val profileButton: Button = findViewById(R.id.profileButton)
-        val activitiesButton: Button = findViewById(R.id.activitiesButton)
-        val genQrCodeButton: Button = findViewById(R.id.genQrCodeButton)
-        val scanQrCodeButton: Button = findViewById(R.id.scanQrCodeButton)
-        val readNfcButton: Button = findViewById(R.id.readNfcButton)
-        val writeNfcButton: Button = findViewById(R.id.writeNfcButton)
+        planningButton = findViewById(R.id.planningButton)
+        profileButton= findViewById(R.id.profileButton)
+        activitiesButton = findViewById(R.id.activitiesButton)
+        genQrCodeButton= findViewById(R.id.genQrCodeButton)
+        scanQrCodeButton= findViewById(R.id.scanQrCodeButton)
+        readNfcButton = findViewById(R.id.readNfcButton)
+        writeNfcButton = findViewById(R.id.writeNfcButton)
 
         updateLoginButton()
 
@@ -54,12 +62,24 @@ class MainActivity : AppCompatActivity() {
         }
 
         activitiesButton.setOnClickListener {
+            val userRole = sharedPreferences.getString("user_role", "ROLE_USER") ?: "ROLE_USER"
+
             if (accessToken != null) {
                 val intent = Intent(this@MainActivity, ActivitiesActivity::class.java)
                 intent.putExtra("username", username)
                 intent.putExtra("password", password)
                 intent.putExtra("access_token", accessToken)
-                startActivity(intent)
+                intent.putExtra("user_role", userRole)
+
+                if (userRole == "ROLE_ADMIN" || userRole == "ROLE_USER") {
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Vous n'avez pas les autorisations nécessaires pour accéder aux activités.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             } else {
                 Toast.makeText(
                     this@MainActivity,
@@ -68,6 +88,7 @@ class MainActivity : AppCompatActivity() {
                 ).show()
             }
         }
+
 
         profileButton.setOnClickListener {
             if (accessToken != null && userId != 0) {
@@ -115,21 +136,30 @@ class MainActivity : AppCompatActivity() {
         }
 
         writeNfcButton.setOnClickListener {
-            var userRole = intent.getStringExtra("user_role") ?: "ROLE_USER"
-            userRole = userRole.replace("[", "").replace("]", "").replace("\"", "")
+            val userRole = sharedPreferences.getString("user_role", "ROLE_USER") ?: "ROLE_USER"
+            val isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
 
-            if (userRole.equals("ROLE_ADMIN", ignoreCase = true)) {
-                val intent = Intent(this@MainActivity, WriteNfcActivity::class.java)
-                intent.putExtra("user_role", userRole)
-                startActivity(intent)
+            if (isLoggedIn) {
+                if (userRole.equals("ROLE_ADMIN", ignoreCase = true)) {
+                    val intent = Intent(this@MainActivity, WriteNfcActivity::class.java)
+                    intent.putExtra("user_role", userRole)
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Vous devez être administrateur pour accéder à cette fonctionnalité.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             } else {
                 Toast.makeText(
                     this@MainActivity,
-                    "Vous devez être administrateur pour accéder à cette fonctionnalité.",
+                    "Vous devez vous connecter pour accéder à cette fonctionnalité.",
                     Toast.LENGTH_SHORT
                 ).show()
             }
         }
+
 
         scanQrCodeButton.setOnClickListener {
             if (accessToken != null && userId != 0) {
@@ -147,21 +177,40 @@ class MainActivity : AppCompatActivity() {
         }
 
         genQrCodeButton.setOnClickListener {
-            var userRole = intent.getStringExtra("user_role") ?: "ROLE_USER"
-            userRole = userRole.replace("[", "").replace("]", "").replace("\"", "")
+            val userRole = sharedPreferences.getString("user_role", "ROLE_USER") ?: "ROLE_USER"
+            val isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
 
-            if (userRole.equals("ROLE_ADMIN", ignoreCase = true)) {
-                val intent = Intent(this@MainActivity, GenerateQRCodeActivity::class.java)
-                intent.putExtra("access_token", accessToken)
-                intent.putExtra("user_role", userRole)
-                startActivity(intent)
+            if (isLoggedIn) {
+                if (userRole.equals("ROLE_ADMIN", ignoreCase = true)) {
+                    val intent = Intent(this@MainActivity, GenerateQRCodeActivity::class.java)
+                    intent.putExtra("access_token", accessToken)
+                    intent.putExtra("user_role", userRole)
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Vous devez être administrateur pour accéder à cette fonctionnalité.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             } else {
                 Toast.makeText(
                     this@MainActivity,
-                    "Vous devez être administrateur pour accéder à cette fonctionnalité.",
+                    "Vous devez vous connecter pour accéder à cette fonctionnalité.",
                     Toast.LENGTH_SHORT
                 ).show()
             }
+        }
+
+    }
+
+    private fun updateButtonsVisibility(userRole: String) {
+        if (userRole.equals("ROLE_ADMIN", ignoreCase = true)) {
+            writeNfcButton.visibility = View.VISIBLE
+            genQrCodeButton.visibility = View.VISIBLE
+        } else {
+            writeNfcButton.visibility = View.GONE
+            genQrCodeButton.visibility = View.GONE
         }
     }
 
@@ -172,8 +221,12 @@ class MainActivity : AppCompatActivity() {
         username = sharedPreferences.getString("username", null)
         password = sharedPreferences.getString("password", null)
         userId = sharedPreferences.getInt("user_id", 0)
+        val userRole = intent.getStringExtra("user_role") ?: "ROLE_USER"
         updateLoginButton()
+        updateButtonsVisibility(userRole)
     }
+
+
 
 
     private fun updateLoginButton() {
