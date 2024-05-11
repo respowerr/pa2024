@@ -12,10 +12,12 @@ import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import kotlin.properties.Delegates
 
 data class Event(val id: Int, val details: String)
 
@@ -27,7 +29,7 @@ class ActivitiesActivity : AppCompatActivity() {
     private lateinit var accessToken: String
     private lateinit var username: String
     private lateinit var password: String
-    private var hasJoined: Boolean = false
+    private var hasJoined by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -141,41 +143,24 @@ class ActivitiesActivity : AppCompatActivity() {
         }
     }
 
-    private fun openMainActivity(hasJoined: Boolean) {
-        val intent = Intent(this@ActivitiesActivity, MainActivity::class.java)
-        intent.putExtra("hasJoined", hasJoined)
-        Log.i(logTag, "$hasJoined")
-        startActivity(intent)
-    }
-
     private fun redirectToMainActivity() {
         val intent = Intent(this@ActivitiesActivity, MainActivity::class.java)
         startActivity(intent)
     }
-    //A FIX
+
     private fun joinEvent(eventId: Int) {
-        val url = "${resources.getString(R.string.server_url_activity)}/$eventId/join"
+        val joinUrl = "${resources.getString(R.string.server_url_activity)}/$eventId/join"
 
-        val jsonObject = JSONObject()
-        jsonObject.put("username", username)
-
-        Log.d(logTag, "joinEvent: Sending join event request to URL: $url")
-        Log.d(logTag, "joinEvent: Request body: $jsonObject")
-
-        val jsonObjectRequest = object : JsonObjectRequest(Method.POST, url, jsonObject,
+        val stringRequest = object : StringRequest(
+            Method.POST, joinUrl,
             { _ ->
-                hasJoined = true
-                val message = "Event joined successfully"
-                Toast.makeText(this@ActivitiesActivity, message, Toast.LENGTH_SHORT).show()
-                fetchActivityData(accessToken)
-                openMainActivity(hasJoined)
+                Toast.makeText(this@ActivitiesActivity, "You joined the event successfully", Toast.LENGTH_SHORT).show()
+                Log.d(logTag, "joinEvent: Successfully joined event with ID: $eventId")
             },
             { error ->
-                val errorMessage = error?.message ?: "Unknown error"
-                val message = "Error joining event: $errorMessage"
-                Log.w(logTag, "joinEvent: $message")
-                Toast.makeText(this@ActivitiesActivity, message, Toast.LENGTH_SHORT).show()
-                openMainActivity(hasJoined)
+                val errorMessage = "Error: " + error.message
+                Toast.makeText(this@ActivitiesActivity, errorMessage, Toast.LENGTH_SHORT).show()
+                Log.e(logTag, "joinEvent: Error joining event: $errorMessage")
             }
         ) {
             override fun getHeaders(): Map<String, String> {
@@ -184,33 +169,28 @@ class ActivitiesActivity : AppCompatActivity() {
                 return headers
             }
         }
-        queue.add(jsonObjectRequest)
+
+        queue.add(stringRequest)
     }
-    //A FIX
+
+
     private fun quitEvent(eventId: Int) {
-        val url = "${resources.getString(R.string.server_url_activity)}/$eventId/quit"
+        val quitUrl = "${resources.getString(R.string.server_url_activity)}/$eventId/quit"
 
-        val jsonObject = JSONObject().apply {
-            put("username", username)
-        }
-
-        Log.d(logTag, "quitEvent: Sending quit event request to URL: $url")
-        Log.d(logTag, "quitEvent: Request body: $jsonObject")
-
-        val jsonObjectRequest = object : JsonObjectRequest(Method.DELETE, url, jsonObject,
+        val stringRequest = object : StringRequest(
+            Method.DELETE, quitUrl,
             { _ ->
-                hasJoined = false
-                val message = "Event quitted successfully"
-                Toast.makeText(this@ActivitiesActivity, message, Toast.LENGTH_SHORT).show()
-                fetchActivityData(accessToken)
-                openMainActivity(hasJoined)
+                Toast.makeText(
+                    this@ActivitiesActivity,
+                    "You left the event successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+                Log.d(logTag, "quitEvent: Successfully left event with ID: $eventId")
             },
             { error ->
-                val errorMessage = error?.message ?: "Unknown error"
-                val message = "Error quitting event: $errorMessage"
-                Log.w(logTag, "quitEvent: $message")
-                Toast.makeText(this@ActivitiesActivity, message, Toast.LENGTH_SHORT).show()
-                openMainActivity(hasJoined)
+                val errorMessage = "Error: " + error.message
+                Toast.makeText(this@ActivitiesActivity, errorMessage, Toast.LENGTH_SHORT).show()
+                Log.e(logTag, "quitEvent: Error leaving event: $errorMessage")
             }
         ) {
             override fun getHeaders(): Map<String, String> {
@@ -219,7 +199,7 @@ class ActivitiesActivity : AppCompatActivity() {
                 return headers
             }
         }
-        queue.add(jsonObjectRequest)
-    }
 
+        queue.add(stringRequest)
+    }
 }
