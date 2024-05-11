@@ -22,7 +22,6 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var nameTextView: TextView
     private lateinit var lastNameTextView: TextView
     private lateinit var locationTextView: TextView
-    private lateinit var passwordTextView: TextView
 
     private lateinit var queue: RequestQueue
 
@@ -36,7 +35,6 @@ class ProfileActivity : AppCompatActivity() {
         nameTextView = findViewById(R.id.name_text_view)
         lastNameTextView = findViewById(R.id.last_name_text_view)
         emailTextView = findViewById(R.id.email_text_view)
-        passwordTextView = findViewById(R.id.password_text_view)
         phoneTextView = findViewById(R.id.phone_text_view)
         locationTextView = findViewById(R.id.location_text_view)
         queue = Volley.newRequestQueue(this)
@@ -58,7 +56,6 @@ class ProfileActivity : AppCompatActivity() {
                 Log.d(logTag, "loadUserProfile: Response JSON: $response")
                 try {
                     val username = response.getString("username")
-                    val password = response.getString("password")
                     val email = response.getString("email")
                     val phone = response.getString("phone")
                     val name = response.getString("name")
@@ -70,7 +67,6 @@ class ProfileActivity : AppCompatActivity() {
                     nameTextView.text = "Name: $name"
                     lastNameTextView.text = "Last Name: $lastName"
                     phoneTextView.text = "Phone: $phone"
-                    passwordTextView.text = "Password: $password"
                     locationTextView.text = "Location: $location"
 
                 } catch (e: Exception) {
