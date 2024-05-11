@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -38,8 +39,10 @@ class MainActivity : AppCompatActivity() {
         accessToken = sharedPreferences.getString("access_token", null)
         username = sharedPreferences.getString("username", null)
         password = sharedPreferences.getString("password", null)
-        userId = sharedPreferences.getInt("user_id", 0)
+        userId = sharedPreferences.getInt("user_id",0)
         userRole = sharedPreferences.getString("user_role", "ROLE_USER") ?: "ROLE_USER"
+        Log.i(logTag, "$userRole")
+        Log.i(logTag, "$username")
 
         loginButton = findViewById(R.id.loginButton)
         planningButton = findViewById(R.id.planningButton)
@@ -51,6 +54,7 @@ class MainActivity : AppCompatActivity() {
         writeNfcButton = findViewById(R.id.writeNfcButton)
 
         updateLoginButton()
+        updateViewVisibility()
 
         loginButton.setOnClickListener {
             if (isLoggedIn) {
@@ -136,9 +140,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         writeNfcButton.setOnClickListener {
-            val userRole = sharedPreferences.getString("user_role", "ROLE_USER") ?: "ROLE_USER"
-            val isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
-
+            Log.d(logTag, "User role: $userRole")
             if (isLoggedIn) {
                 if (userRole.equals("ROLE_ADMIN", ignoreCase = true)) {
                     val intent = Intent(this@MainActivity, WriteNfcActivity::class.java)
@@ -161,6 +163,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+
         scanQrCodeButton.setOnClickListener {
             if (accessToken != null && userId != 0) {
                 val intent = Intent(this@MainActivity, ScanQRCodeActivity::class.java)
@@ -177,9 +180,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         genQrCodeButton.setOnClickListener {
-            val userRole = sharedPreferences.getString("user_role", "ROLE_USER") ?: "ROLE_USER"
-            val isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false)
-
+            Log.d(logTag, "User role: $userRole")
             if (isLoggedIn) {
                 if (userRole.equals("ROLE_ADMIN", ignoreCase = true)) {
                     val intent = Intent(this@MainActivity, GenerateQRCodeActivity::class.java)
@@ -204,6 +205,18 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun updateViewVisibility() {
+        if (userRole.equals("[\"ROLE_ADMIN\"]", ignoreCase = true)) {
+            genQrCodeButton.visibility = View.VISIBLE
+            writeNfcButton.visibility = View.VISIBLE
+
+        } else {
+            genQrCodeButton.visibility = View.GONE
+            writeNfcButton.visibility = View.GONE
+            Log.i(logTag, "-----------$userRole")
+
+        }
+    }
 
     override fun onStart() {
         super.onStart()
@@ -213,7 +226,9 @@ class MainActivity : AppCompatActivity() {
         password = sharedPreferences.getString("password", null)
         userId = sharedPreferences.getInt("user_id", 0)
         userRole = sharedPreferences.getString("user_role", "ROLE_USER") ?: "ROLE_USER"
+        Log.i(logTag, "!!!!$userRole")
         updateLoginButton()
+        updateViewVisibility()
 
     }
 

@@ -72,7 +72,7 @@ class LoginActivity : AppCompatActivity() {
                     val userRole = response.getString("roles")
                     if (accessToken.isNotEmpty()) {
                         Log.i(logTag, "Connexion réussie")
-                        saveUserSession(accessToken, username, password, userId)
+                        saveUserSession(accessToken, username, password, userId, userRole)
                         openMainActivity(username, password, accessToken, userId, userRole)
                         Toast.makeText(this@LoginActivity, "Connexion réussie", Toast.LENGTH_SHORT).show()
                         finish()
@@ -109,7 +109,7 @@ class LoginActivity : AppCompatActivity() {
         queue.add(jsonObjectRequest)
     }
 
-    private fun saveUserSession(accessToken: String, username: String, password: String, userId: Int) {
+    private fun saveUserSession(accessToken: String, username: String, password: String, userId: Int, userRole: String) {
         val sharedPref: SharedPreferences = getSharedPreferences("user_session", Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPref.edit()
         editor.putBoolean("is_logged_in", true)
@@ -117,6 +117,8 @@ class LoginActivity : AppCompatActivity() {
         editor.putString("username", username)
         editor.putString("password", password)
         editor.putInt("user_id", userId)
+        editor.putString("user_role", userRole)
+
         editor.apply()
     }
 
