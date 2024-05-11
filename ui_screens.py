@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, PhotoImage
 from api_functions import login, create_ticket, fetch_tickets
-from chat_functions import open_chat
+from chat_functions import open_chat, send_message, refresh_messages
 from tkinter import simpledialog, messagebox
 import requests
 
@@ -125,29 +125,53 @@ class UI_Screens:
             tree.heading('Sender', text='Sender')
             tree.heading('Resolved', text='Resolved')
             tree.heading('Title', text='Title')
-            tree.pack(fill=tk.BOTH, expand=True)
+            tree.pack(fill=tk.BOTH, expand=True, pady=10)
 
             tickets = fetch_tickets(self.access_token)
             for ticket in tickets:
                 tree.insert('', 'end', values=(ticket['ticket_id'], ticket['sender'], ticket['resolved'], ticket['title']))
 
-            back_button = ttk.Button(self.main_frame, text="Retour", command=self.home_screen)
-            back_button.pack(pady=10)
+            button_frame = ttk.Frame(self.main_frame)
+            button_frame.pack(pady=10, fill=tk.X)
 
-            resolve_button = ttk.Button(self.main_frame, text="Mark as Resolved", state='disabled')
-            resolve_button.pack(pady=10)
+            back_button = ttk.Button(button_frame, text="Retour", command=self.home_screen)
+            back_button.pack(side=tk.LEFT, padx=10)
 
-            def update_resolve_button(event):
+            chat_button = ttk.Button(button_frame, text="Chat", state='disabled')
+            chat_button.pack(side=tk.LEFT, padx=10)
+
+            resolve_button = ttk.Button(button_frame, text="Mark as Resolved", state='disabled')
+            resolve_button.pack(side=tk.LEFT, padx=10)
+
+            delete_button = ttk.Button(button_frame, text="Delete Ticket", state='disabled')
+            delete_button.pack(side=tk.LEFT, padx=10)
+
+            def update_buttons(event):
                 selected_item = tree.selection()
                 if selected_item:
                     ticket_id = tree.item(selected_item, 'values')[0]
                     resolved = tree.item(selected_item, 'values')[2]
-                    if resolved == 'False' and "ROLE_ADMIN" in self.roles:
-                        resolve_button.config(state='normal', command=lambda: self.resolve_ticket(ticket_id))
+
+                    # Call open_chat directly from the chat_functions module
+                    chat_button.config(state='normal', command=lambda: open_chat(ticket_id, self.master, self.access_token, "ROLE_ADMIN"))
+
+                    if "ROLE_ADMIN" in self.roles:
+                        if resolved == 'False':
+                            resolve_button.config(state='normal', command=lambda: self.resolve_ticket(ticket_id))
+                            delete_button.config(state='normal', command=lambda: self.delete_ticket(ticket_id))
+                        else:
+                            resolve_button.config(state='disabled')
+                            delete_button.config(state='disabled')
                     else:
                         resolve_button.config(state='disabled')
+                        delete_button.config(state='disabled')
+                else:
+                    chat_button.config(state='disabled')
+                    resolve_button.config(state='disabled')
+                    delete_button.config(state='disabled')
 
-            tree.bind('<<TreeviewSelect>>', update_resolve_button)
+            tree.bind('<<TreeviewSelect>>', update_buttons)
+
         except Exception as e:
             messagebox.showerror("Erreur", str(e))
 
@@ -231,6 +255,9 @@ class UI_Screens:
             back_button = ttk.Button(button_frame, text="Retour", command=self.home_screen)
             back_button.pack(side=tk.LEFT, padx=10)
 
+            chat_button = ttk.Button(button_frame, text="Chat", state='disabled')
+            chat_button.pack(side=tk.LEFT, padx=10)
+
             if "ROLE_ADMIN" in self.roles:
                 resolve_button = ttk.Button(button_frame, text="Mark as Resolved", state='disabled')
                 resolve_button.pack(side=tk.LEFT, padx=10)
@@ -238,21 +265,27 @@ class UI_Screens:
                 delete_button = ttk.Button(button_frame, text="Delete Ticket", state='disabled')
                 delete_button.pack(side=tk.LEFT, padx=10)
 
-                def update_buttons(event):
-                    selected_item = tree.selection()
-                    if selected_item:
-                        ticket_id = tree.item(selected_item, 'values')[0]
-                        resolved = tree.item(selected_item, 'values')[2]
+            def update_buttons(event):
+                selected_item = tree.selection()
+                if selected_item:
+                    ticket_id = tree.item(selected_item, 'values')[0]
+                    resolved = tree.item(selected_item, 'values')[2]
+
+                    chat_button.config(state='normal', command=lambda: open_chat(ticket_id, self.master, self.access_token, "ROLE_ADMIN"))
+
+                    if "ROLE_ADMIN" in self.roles:
                         if resolved == 'False':
                             resolve_button.config(state='normal', command=lambda: self.resolve_ticket(ticket_id))
                         else:
                             resolve_button.config(state='disabled')
-
                         delete_button.config(state='normal', command=lambda: self.delete_ticket(ticket_id))
-                    else:
+                else:
+                    chat_button.config(state='disabled')
+                    if "ROLE_ADMIN" in self.roles:
                         resolve_button.config(state='disabled')
                         delete_button.config(state='disabled')
 
-                tree.bind('<<TreeviewSelect>>', update_buttons)
+            tree.bind('<<TreeviewSelect>>', update_buttons)
+
         except Exception as e:
             messagebox.showerror("Erreur", str(e))
