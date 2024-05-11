@@ -3,7 +3,7 @@ from tkinter import ttk, scrolledtext
 import requests
 
 
-CHAT_WINDOW_SIZE = "500x500"
+CHAT_WINDOW_SIZE = "500x600"
 API_BASE_URL = "http://ddns.callidos-mtf.fr:8080/tickets/"
 
 def open_chat(ticket_id, master, access_token, user_role):
@@ -33,16 +33,7 @@ def open_chat(ticket_id, master, access_token, user_role):
     send_button = ttk.Button(chat_window, text="Send", 
                              command=lambda: send_message(msg_entry, message_area, ticket_id, access_token))
     send_button.pack(side=tk.RIGHT, pady=10, padx=10)
-
-    if user_role == "ROLE_ADMIN":
-        resolve_button = ttk.Button(chat_window, text="Mark Resolved",
-                                    command=lambda: manage_ticket(ticket_id, access_token, "resolve"))
-        resolve_button.pack(side=tk.BOTTOM, pady=5)
-
-        delete_button = ttk.Button(chat_window, text="Delete Ticket",
-                                   command=lambda: manage_ticket(ticket_id, access_token, "delete"))
-        delete_button.pack(side=tk.BOTTOM, pady=5)
-
+    
 def send_message(msg_entry, message_area, ticket_id, access_token):
     """ Send a message and refresh the message area upon successful send. """
     message = msg_entry.get()
