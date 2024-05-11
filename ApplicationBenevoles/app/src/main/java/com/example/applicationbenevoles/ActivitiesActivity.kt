@@ -1,5 +1,6 @@
 package com.example.applicationbenevoles
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -11,13 +12,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonArrayRequest
-import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONArray
 import org.json.JSONException
-import org.json.JSONObject
-import kotlin.properties.Delegates
 
 data class Event(val id: Int, val details: String)
 
@@ -29,7 +27,6 @@ class ActivitiesActivity : AppCompatActivity() {
     private lateinit var accessToken: String
     private lateinit var username: String
     private lateinit var password: String
-    private var hasJoined by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,6 +113,7 @@ class ActivitiesActivity : AppCompatActivity() {
     }
 
 
+    @SuppressLint("SetTextI18n")
     private fun displayActivity(activityList: List<Event>) {
         val activityContainer = findViewById<LinearLayout>(R.id.activityContainer)
         activityContainer.removeAllViews()
@@ -148,14 +146,21 @@ class ActivitiesActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+
+
     private fun joinEvent(eventId: Int) {
         val joinUrl = "${resources.getString(R.string.server_url_activity)}/$eventId/join"
 
         val stringRequest = object : StringRequest(
             Method.POST, joinUrl,
             { _ ->
-                Toast.makeText(this@ActivitiesActivity, "You joined the event successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@ActivitiesActivity,
+                    "You joined the event successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
                 Log.d(logTag, "joinEvent: Successfully joined event with ID: $eventId")
+                redirectToMainActivity()
             },
             { error ->
                 val errorMessage = "Error: " + error.message
@@ -169,10 +174,8 @@ class ActivitiesActivity : AppCompatActivity() {
                 return headers
             }
         }
-
         queue.add(stringRequest)
     }
-
 
     private fun quitEvent(eventId: Int) {
         val quitUrl = "${resources.getString(R.string.server_url_activity)}/$eventId/quit"
@@ -186,6 +189,7 @@ class ActivitiesActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
                 Log.d(logTag, "quitEvent: Successfully left event with ID: $eventId")
+                redirectToMainActivity()
             },
             { error ->
                 val errorMessage = "Error: " + error.message
@@ -199,7 +203,6 @@ class ActivitiesActivity : AppCompatActivity() {
                 return headers
             }
         }
-
         queue.add(stringRequest)
     }
 }
