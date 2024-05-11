@@ -1,9 +1,9 @@
 import tkinter as tk
-from app_setup import TicketApp
+from ui_screens import UI_Screens
 
 def main():
     root = tk.Tk()
-    app = TicketApp(root)
+    app = UI_Screens(root)
     root.mainloop()
 
 if __name__ == "__main__":
