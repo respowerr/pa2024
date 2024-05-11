@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +18,7 @@ class MainActivity : AppCompatActivity() {
     private var username: String? = null
     private var password: String? = null
     private var userId: Int = 0
-    private var hasJoined: Boolean = false
+    private var userRole: String? = null
 
     private lateinit var planningButton: Button
     private lateinit var profileButton: Button
@@ -40,14 +39,14 @@ class MainActivity : AppCompatActivity() {
         username = sharedPreferences.getString("username", null)
         password = sharedPreferences.getString("password", null)
         userId = sharedPreferences.getInt("user_id", 0)
-        hasJoined = sharedPreferences.getBoolean("hasJoined", false)
+        userRole = sharedPreferences.getString("user_role", "ROLE_USER") ?: "ROLE_USER"
 
         loginButton = findViewById(R.id.loginButton)
         planningButton = findViewById(R.id.planningButton)
-        profileButton= findViewById(R.id.profileButton)
+        profileButton = findViewById(R.id.profileButton)
         activitiesButton = findViewById(R.id.activitiesButton)
-        genQrCodeButton= findViewById(R.id.genQrCodeButton)
-        scanQrCodeButton= findViewById(R.id.scanQrCodeButton)
+        genQrCodeButton = findViewById(R.id.genQrCodeButton)
+        scanQrCodeButton = findViewById(R.id.scanQrCodeButton)
         readNfcButton = findViewById(R.id.readNfcButton)
         writeNfcButton = findViewById(R.id.writeNfcButton)
 
@@ -110,6 +109,7 @@ class MainActivity : AppCompatActivity() {
                 val intent = Intent(this@MainActivity, PlanningActivity::class.java)
                 intent.putExtra("access_token", accessToken)
                 intent.putExtra("user_id", userId)
+                Log.i(logTag, "$userId")
                 startActivity(intent)
             } else {
                 Toast.makeText(
@@ -204,15 +204,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun updateButtonsVisibility(userRole: String) {
-        if (userRole.equals("ROLE_ADMIN", ignoreCase = true)) {
-            writeNfcButton.visibility = View.VISIBLE
-            genQrCodeButton.visibility = View.VISIBLE
-        } else {
-            writeNfcButton.visibility = View.GONE
-            genQrCodeButton.visibility = View.GONE
-        }
-    }
 
     override fun onStart() {
         super.onStart()
@@ -221,12 +212,10 @@ class MainActivity : AppCompatActivity() {
         username = sharedPreferences.getString("username", null)
         password = sharedPreferences.getString("password", null)
         userId = sharedPreferences.getInt("user_id", 0)
-        val userRole = intent.getStringExtra("user_role") ?: "ROLE_USER"
+        userRole = sharedPreferences.getString("user_role", "ROLE_USER") ?: "ROLE_USER"
         updateLoginButton()
-        updateButtonsVisibility(userRole)
+
     }
-
-
 
 
     private fun updateLoginButton() {
@@ -241,9 +230,10 @@ class MainActivity : AppCompatActivity() {
             remove("username")
             remove("password")
             remove("user_id")
-            remove("hasJoined")
+            remove("user_role")
             apply()
         }
         updateLoginButton()
+
     }
 }

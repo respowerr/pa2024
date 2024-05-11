@@ -4,24 +4,20 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Request
-
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.WriterException
-import com.google.zxing.common.BitMatrix
-import com.google.zxing.qrcode.QRCodeWriter
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.WriterException
+import com.google.zxing.common.BitMatrix
+import com.google.zxing.qrcode.QRCodeWriter
 import org.json.JSONArray
 import org.json.JSONException
 
@@ -91,7 +87,8 @@ class GenerateQRCodeActivity : AppCompatActivity() {
                     val utilization = response.getDouble("utilization")
                     val currentStock = response.getInt("current_stock")
 
-                    val data = "\nWarehouse ID: $warehouseId\nLocation: $location\nRack Capacity: $rackCapacity\nUtilization: $utilization\nCurrent Stock: $currentStock"
+                    val data =
+                        "\nWarehouse ID: $warehouseId\nLocation: $location\nRack Capacity: $rackCapacity\nUtilization: $utilization\nCurrent Stock: $currentStock"
                     generateQRCode(data)
                 } catch (e: JSONException) {
                     Log.e(logTag, "Error parsing warehouse details: ${e.message}")
