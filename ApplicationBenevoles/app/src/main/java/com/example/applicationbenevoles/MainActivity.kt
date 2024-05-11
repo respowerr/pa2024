@@ -140,11 +140,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         writeNfcButton.setOnClickListener {
-            Log.d(logTag, "User role: $userRole")
             if (isLoggedIn) {
-                if (userRole.equals("ROLE_ADMIN", ignoreCase = true)) {
+                if (userRole.equals("[\"ROLE_ADMIN\"]", ignoreCase = true)) {
                     val intent = Intent(this@MainActivity, WriteNfcActivity::class.java)
                     intent.putExtra("user_role", userRole)
+                    intent.putExtra("access_token", accessToken)
                     startActivity(intent)
                 } else {
                     Toast.makeText(
@@ -182,7 +182,7 @@ class MainActivity : AppCompatActivity() {
         genQrCodeButton.setOnClickListener {
             Log.d(logTag, "User role: $userRole")
             if (isLoggedIn) {
-                if (userRole.equals("ROLE_ADMIN", ignoreCase = true)) {
+                if (userRole.equals("[\"ROLE_ADMIN\"]", ignoreCase = true)) {
                     val intent = Intent(this@MainActivity, GenerateQRCodeActivity::class.java)
                     intent.putExtra("access_token", accessToken)
                     intent.putExtra("user_role", userRole)
