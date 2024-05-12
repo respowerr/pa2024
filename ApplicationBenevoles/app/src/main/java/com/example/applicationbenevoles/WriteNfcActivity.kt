@@ -26,7 +26,6 @@ class WriteNfcActivity : AppCompatActivity() {
     private val logTag = "APP_BENEVOLE "
     private lateinit var adapter: NfcAdapter
     private lateinit var editText: EditText
-    private lateinit var writeNfcButton: Button
     private var tagFromIntent: Tag? = null
 
     private lateinit var accessToken: String
@@ -38,18 +37,9 @@ class WriteNfcActivity : AppCompatActivity() {
         Log.w(logTag, "WriteNfc Created")
         setContentView(R.layout.activity_write_nfc)
         editText = findViewById(R.id.editText)
-        writeNfcButton = findViewById(R.id.writeNfcButton)
-
 
         accessToken = intent.getStringExtra("access_token") ?: ""
         Log.d(logTag, accessToken)
-
-
-        writeNfcButton.setOnClickListener {
-            val nfcText = editText.text.toString()
-            Log.d(logTag, "Write NFC button clicked with text: $nfcText")
-            checkIdExistence(nfcText, accessToken)
-        }
 
         initNfcAdapter()
     }
