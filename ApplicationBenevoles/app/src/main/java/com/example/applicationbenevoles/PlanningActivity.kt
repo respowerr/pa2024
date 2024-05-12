@@ -1,12 +1,12 @@
 package com.example.applicationbenevoles
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.StringRequest
@@ -31,7 +31,7 @@ class PlanningActivity : AppCompatActivity() {
     private lateinit var joinedStatusTextView: TextView
     private var userId: Int = 0
     private lateinit var accessToken: String
-    private var eventIdToCheck: String? = null
+    private var currentEventId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +46,7 @@ class PlanningActivity : AppCompatActivity() {
         joinedStatusTextView = findViewById(R.id.joinedStatusTextView)
         queue = Volley.newRequestQueue(this)
 
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
         formattedDate = dateFormat.format(Date())
         displayCurrentDate()
 
@@ -54,8 +54,7 @@ class PlanningActivity : AppCompatActivity() {
         accessToken = intent.getStringExtra("access_token") ?: ""
 
         if (accessToken.isNotEmpty()) {
-            Log.d(logTag, "onCreate: Access token received: $accessToken")
-            fetchPlanningData(userId.toString())
+            fetchPlanningData(accessToken, formattedDate)
         } else {
             Log.e(logTag, "onCreate: Access token is empty or null")
             Toast.makeText(
@@ -74,9 +73,14 @@ class PlanningActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
+    private fun displayCurrentDate() {
+        dateTextView.text = "Date: $formattedDate"
+    }
+
     private fun updateDate(daysToAdd: Int) {
         val calendar = Calendar.getInstance()
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
         try {
             val currentDate = dateFormat.parse(formattedDate)
             if (currentDate != null) {
@@ -86,28 +90,23 @@ class PlanningActivity : AppCompatActivity() {
             val newDate = calendar.time
             formattedDate = dateFormat.format(newDate)
             Log.d(logTag, "New Date: $formattedDate")
+            fetchPlanningData(accessToken, formattedDate)
             displayCurrentDate()
-            fetchPlanningData(userId.toString())
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    private fun displayCurrentDate() {
-        dateTextView.text = "Date: $formattedDate"
-    }
-
-    private fun fetchPlanningData(userId: String) {
-        Log.d(logTag, "fetchPlanningData: Fetching planning data for date: $formattedDate")
-
-        val url = resources.getString(R.string.server_url_activity) + "?date=$formattedDate"
+    private fun fetchPlanningData(accessToken: String, date: String) {
+        val url = "${resources.getString(R.string.server_url_activity)}?date=$date"
         Log.d(logTag, "fetchPlanningData: URL: $url")
 
-        val jsonArrayRequest = object : JsonArrayRequest(Request.Method.GET, url, null,
+        val jsonArrayRequest = object : JsonArrayRequest(Method.GET, url, null,
             { response ->
                 Log.d(logTag, "fetchPlanningData: Planning data fetched successfully")
-                val planningList = parsePlanningResponse(response)
-                displayPlanning(planningList)
+                Log.d(logTag, "Response from server: $response")
+                val planningList = parsePlanningResponse(response, date)
+                displayPlanning(planningList, accessToken)
             },
             { error ->
                 val errorMessage = "Error: " + error.message
@@ -126,67 +125,100 @@ class PlanningActivity : AppCompatActivity() {
         queue.add(jsonArrayRequest)
     }
 
-    private fun parsePlanningResponse(response: JSONArray): List<Event> {
+    private fun displayPlanning(planningList: List<Event>, accessToken: String) {
+        val stringBuilder = StringBuilder()
+        if (planningList.isEmpty()) {
+            stringBuilder.append("Aucune activité pour ce jour")
+        } else {
+            for (event in planningList) {
+                stringBuilder.append(event.toString()).append("\n\n")
+            }
+        }
+        planningTextView.text = stringBuilder.toString()
+
+        if (currentEventId != null) {
+            fetchUserEvents(accessToken)
+        }
+    }
+
+
+    private fun parsePlanningResponse(response: JSONArray, date: String): List<Event> {
         val planningList: MutableList<Event> = mutableListOf()
         val eventIdList = mutableListOf<String>()
+        Log.w(logTag, "Response from server: $response")
 
         try {
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+            val targetDate = dateFormat.parse(date)
+
             for (i in 0 until response.length()) {
                 val event = response.getJSONObject(i)
-                val eventDate = event.getString("eventStart")
+                val eventStartFormattedDate = event.getString("eventStartFormattedDate")
+                val eventEndFormattedDate = event.getString("eventEndFormattedDate")
 
-                if (eventDate == formattedDate) {
+                val eventStartDate = dateFormat.parse(eventStartFormattedDate)
+                val eventEndDate = dateFormat.parse(eventEndFormattedDate)
+
+                if (isEventOnDate(eventStartDate, eventEndDate, targetDate)) {
                     val eventId = event.getString("id")
                     val eventName = event.getString("eventName")
                     val eventType = event.getString("eventType")
-                    val eventStart = event.getString("eventStart")
-                    val eventEnd = event.getString("eventEnd")
                     val location = event.getString("location")
                     val description = event.getString("description")
                     val eventDetails = Event(
                         eventId,
                         eventName,
                         eventType,
-                        eventStart,
-                        eventEnd,
+                        eventStartFormattedDate,
+                        eventEndFormattedDate,
                         location,
                         description
                     )
                     planningList.add(eventDetails)
-                    Log.d(logTag, "Event parsed: $eventDetails")
-
                     eventIdList.add(eventId)
 
-                    eventIdToCheck = eventId
-                    Log.i(logTag, "$eventIdToCheck")
+                    currentEventId = eventId
                 }
             }
         } catch (e: JSONException) {
             Log.e(logTag, "Erreur de la récupération du JSON:" + e.stackTrace.contentToString())
         }
+
         if (planningList.isEmpty()) {
-            eventIdToCheck = "0"
-            Log.i(logTag, "eventIdToCheck set to 0 as there are no events")
+            currentEventId = "0"
         }
 
         return planningList
     }
 
-    private fun displayPlanning(planningList: List<Event>) {
-        val stringBuilder = StringBuilder()
-        for (event in planningList) {
-            stringBuilder.append(event.toString()).append("\n\n")
+    private fun isEventOnDate(eventStartDate: Date, eventEndDate: Date, targetDate: Date): Boolean {
+        val calendar = Calendar.getInstance().apply {
+            time = targetDate
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
         }
-        planningTextView.text = stringBuilder.toString()
-
-        if (eventIdToCheck != null) {
-            fetchUserEvents(userId.toString())
+        val startDateCalendar = Calendar.getInstance().apply {
+            time = eventStartDate
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
         }
+        val endDateCalendar = Calendar.getInstance().apply {
+            time = eventEndDate
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        return calendar in startDateCalendar..endDateCalendar
     }
 
-    private fun fetchUserEvents(userId: String) {
-        val url = "${resources.getString(R.string.server_url_info)}/$userId"
-        Log.i(logTag, userId)
+
+    private fun fetchUserEvents(accessToken: String) {
+        val url = "${resources.getString(R.string.server_url_info)}/me"
         Log.d(logTag, "fetchUserEvents: URL: $url")
 
         val stringRequest = object : StringRequest(Method.GET, url,
@@ -196,7 +228,7 @@ class PlanningActivity : AppCompatActivity() {
                     val eventsArray = jsonResponse.getJSONArray("events")
                     val eventIdList = mutableListOf<String>()
                     for (i in 0 until eventsArray.length()) {
-                        val eventId = eventsArray.getJSONObject(i).getString("event_id")
+                        val eventId = eventsArray.getJSONObject(i).getString("id")
                         eventIdList.add(eventId)
                     }
                     checkUserEventRegistration(eventIdList)
@@ -213,7 +245,6 @@ class PlanningActivity : AppCompatActivity() {
             override fun getHeaders(): Map<String, String> {
                 val headers: MutableMap<String, String> = HashMap()
                 headers["Authorization"] = "Bearer $accessToken"
-                Log.d(logTag, headers.toString())
                 return headers
             }
         }
@@ -223,8 +254,7 @@ class PlanningActivity : AppCompatActivity() {
 
 
     private fun checkUserEventRegistration(eventIdList: List<String>) {
-        Log.d(logTag, "eventIdToCheck: $eventIdToCheck")
-        val joinedMessage = if (eventIdToCheck != null && eventIdList.contains(eventIdToCheck)) {
+        val joinedMessage = if (currentEventId != null && eventIdList.contains(currentEventId)) {
             "Vous êtes inscrit à cet événement"
         } else {
             "Vous n'êtes pas inscrit à cet événement"

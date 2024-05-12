@@ -94,8 +94,8 @@ class ActivitiesActivity : AppCompatActivity() {
                 val eventId = event.getInt("id")
                 val eventName = event.getString("eventName")
                 val eventType = event.getString("eventType")
-                val eventStart = event.getString("eventStart")
-                val eventEnd = event.getString("eventEnd")
+                val eventStart = event.getString("eventStartFormattedDate")
+                val eventEnd = event.getString("eventEndFormattedDate")
                 val location = event.getString("location")
                 val description = event.getString("description")
                 val eventDetails = "Nom: $eventName\n" +
@@ -163,7 +163,7 @@ class ActivitiesActivity : AppCompatActivity() {
                 redirectToMainActivity()
             },
             { error ->
-                val errorMessage = "Error: " + error.message
+                val errorMessage = "Vous êtes déjà inscrit a cette activité"
                 Toast.makeText(this@ActivitiesActivity, errorMessage, Toast.LENGTH_SHORT).show()
                 Log.e(logTag, "joinEvent: Error joining event: $errorMessage")
             }
