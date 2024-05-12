@@ -94,8 +94,8 @@ class ActivitiesActivity : AppCompatActivity() {
                 val eventId = event.getInt("id")
                 val eventName = event.getString("eventName")
                 val eventType = event.getString("eventType")
-                val eventStart = event.getString("eventStart")
-                val eventEnd = event.getString("eventEnd")
+                val eventStart = event.getString("eventStartFormattedDate")
+                val eventEnd = event.getString("eventEndFormattedDate")
                 val location = event.getString("location")
                 val description = event.getString("description")
                 val eventDetails = "Nom: $eventName\n" +

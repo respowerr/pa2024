@@ -73,16 +73,15 @@ class MainActivity : AppCompatActivity() {
                 intent.putExtra("password", password)
                 intent.putExtra("access_token", accessToken)
                 intent.putExtra("user_role", userRole)
-
-                if (userRole == "ROLE_ADMIN" || userRole == "ROLE_USER") {
+                //if (userRole == "[\"ROLE_ADMIN\"]" || userRole == "[\"ROLE_USER\"]") {
                     startActivity(intent)
-                } else {
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Vous n'avez pas les autorisations nécessaires pour accéder aux activités.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+//                } else {
+//                    Toast.makeText(
+//                        this@MainActivity,
+//                        "Vous n'avez pas les autorisations nécessaires pour accéder aux activités.",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
             } else {
                 Toast.makeText(
                     this@MainActivity,
