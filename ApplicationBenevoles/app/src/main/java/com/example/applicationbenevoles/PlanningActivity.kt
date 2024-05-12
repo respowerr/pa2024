@@ -3,7 +3,9 @@ package com.example.applicationbenevoles
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +31,7 @@ class PlanningActivity : AppCompatActivity() {
     private lateinit var previousDayButton: Button
     private lateinit var nextDayButton: Button
     private lateinit var joinedStatusTextView: TextView
+    private lateinit var activityContainer: LinearLayout
     private var userId: Int = 0
     private lateinit var accessToken: String
     private var currentEventId: String? = null
@@ -45,6 +48,7 @@ class PlanningActivity : AppCompatActivity() {
         nextDayButton = findViewById(R.id.nextDayButton)
         joinedStatusTextView = findViewById(R.id.joinedStatusTextView)
         queue = Volley.newRequestQueue(this)
+        activityContainer = findViewById(R.id.activityContainer)
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
         formattedDate = dateFormat.format(Date())
@@ -125,23 +129,6 @@ class PlanningActivity : AppCompatActivity() {
         queue.add(jsonArrayRequest)
     }
 
-    private fun displayPlanning(planningList: List<Event>, accessToken: String) {
-        val stringBuilder = StringBuilder()
-        if (planningList.isEmpty()) {
-            stringBuilder.append("Aucune activité pour ce jour")
-        } else {
-            for (event in planningList) {
-                stringBuilder.append(event.toString()).append("\n\n")
-            }
-        }
-        planningTextView.text = stringBuilder.toString()
-
-        if (currentEventId != null) {
-            fetchUserEvents(accessToken)
-        }
-    }
-
-
     private fun parsePlanningResponse(response: JSONArray, date: String): List<Event> {
         val planningList: MutableList<Event> = mutableListOf()
         val eventIdList = mutableListOf<String>()
@@ -216,8 +203,44 @@ class PlanningActivity : AppCompatActivity() {
         return calendar in startDateCalendar..endDateCalendar
     }
 
+    private fun displayPlanning(planningList: List<Event>, accessToken: String) {
+        val stringBuilder = StringBuilder()
+        if (planningList.isEmpty()) {
+            stringBuilder.append("Aucune activité pour ce jour")
+            val viewsToRemove = mutableListOf<View>()
+            for (i in 0 until activityContainer.childCount) {
+                val view = activityContainer.getChildAt(i)
+                if (view.tag == "statusTextView") {
+                    viewsToRemove.add(view)
+                }
+            }
+            viewsToRemove.forEach { activityContainer.removeView(it) }
+        } else {
+            val viewsToRemove = mutableListOf<View>()
+            for (i in 0 until activityContainer.childCount) {
+                val view = activityContainer.getChildAt(i)
+                if (view.tag == "statusTextView") {
+                    viewsToRemove.add(view)
+                }
+            }
+            viewsToRemove.forEach { activityContainer.removeView(it) }
 
-    private fun fetchUserEvents(accessToken: String) {
+            for (event in planningList) {
+                stringBuilder.append(event.toString()).append("\n\n")
+                val statusTextView = TextView(this@PlanningActivity)
+                statusTextView.tag = "statusTextView"
+                checkUserEventRegistration(event.id, accessToken, statusTextView)
+                activityContainer.addView(statusTextView)
+            }
+        }
+        planningTextView.text = stringBuilder.toString()
+    }
+
+
+
+
+
+    private fun checkUserEventRegistration(eventId: String, accessToken: String, statusTextView: TextView) {
         val url = "${resources.getString(R.string.server_url_info)}/me"
         Log.d(logTag, "fetchUserEvents: URL: $url")
 
@@ -231,7 +254,15 @@ class PlanningActivity : AppCompatActivity() {
                         val eventId = eventsArray.getJSONObject(i).getString("id")
                         eventIdList.add(eventId)
                     }
-                    checkUserEventRegistration(eventIdList)
+                    val joinedMessage = if (eventIdList.contains(eventId)) {
+                        "Vous êtes inscrit à la conférence avec l'ID $eventId"
+                    } else {
+                        "Vous n'êtes pas inscrit à la conférence avec l'ID $eventId"
+                    }
+                    Log.d(logTag, "Joined Message: $joinedMessage")
+
+                    statusTextView.text = joinedMessage
+
                 } catch (e: JSONException) {
                     Log.e(logTag, "Error parsing user events JSON: ${e.message}")
                 }
@@ -250,18 +281,6 @@ class PlanningActivity : AppCompatActivity() {
         }
 
         queue.add(stringRequest)
-    }
-
-
-    private fun checkUserEventRegistration(eventIdList: List<String>) {
-        val joinedMessage = if (currentEventId != null && eventIdList.contains(currentEventId)) {
-            "Vous êtes inscrit à cet événement"
-        } else {
-            "Vous n'êtes pas inscrit à cet événement"
-        }
-        Log.d(logTag, "Joined Message: $joinedMessage")
-
-        joinedStatusTextView.text = joinedMessage
     }
 
     data class Event(
