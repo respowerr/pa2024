@@ -44,8 +44,7 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun loadUserProfile() {
         val accessToken = intent.getStringExtra("access_token")
-        val userId = intent.getIntExtra("user_id", 0)
-        val url = getString(R.string.server_url_info) + "/$userId"
+        val url = getString(R.string.server_url_info) + "/me"
 
         Log.d(logTag, "loadUserProfile: URL: $url")
 
