@@ -1,4 +1,6 @@
 <?php
+    session_start();
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $username = $_POST["username"];
         $password = $_POST["password"];
@@ -23,8 +25,7 @@
             echo "Login failed.";
         } else {
             $userData = json_decode($result, true);
-            
-            session_start();
+
             $_SESSION['user_id'] = $userData['id'];
             $_SESSION['username'] = $userData['username'];
             $_SESSION['email'] = $userData['email'];

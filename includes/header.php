@@ -34,6 +34,19 @@
       
           <div class="navbar-end">
             <div class="navbar-item">
+              <?php
+                if(isset($_SESSION['username'])) {
+                    echo '<p class="navbar-item" style="margin-right: 15px;">Welcome, ' . $_SESSION['username'] . '.</p>';
+                    echo '<a class="navbar-item" href="/public/myprofil.php">My profil</a>';
+                    echo '<a class="navbar-item" href="/public/events.php">Events</a>';
+                    echo '<a class="navbar-item" href="/public/tickets.php">Tickets</a>';
+                    echo '<a class="navbar-item" href="/public/warehouses.php">Warehouses</a>';
+                    if(in_array('ROLE_ADMIN', $_SESSION['role'])){
+                        echo '<a class="navbar-item" href="/admin/index.php">Admin panel</a>';
+                    }
+                    echo '<a class="button is-info" href="/public/logout.php">Logout</a>';
+                } else {
+              ?>
               <div class="buttons">
                 <a class="button is-info" href="<?= '/public/register.php' ?>">
                   <strong>Join us</strong>
@@ -42,6 +55,9 @@
                   Log in
                 </a>
               </div>
+              <?php
+                }
+              ?>
             </div>
           </div>
         </div>

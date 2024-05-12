@@ -4,7 +4,7 @@
 
 <head>
     <?php
-        $title = "About us - ATD";
+        $title = "Warehouses - ATD";
         include_once($_SERVER['DOCUMENT_ROOT'] . '/includes/head.php');
     ?>    
 </head>
