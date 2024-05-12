@@ -26,6 +26,7 @@ class UI_Screens:
         self.roles = []
         self.username = None
         self.login_screen()
+        self.center_window(self.master) 
 
 
     def configure_window(self):
@@ -36,13 +37,30 @@ class UI_Screens:
     def configure_styles(self):
         style = ttk.Style()
         style.theme_use('clam')
+
         style.configure('TFrame', background='#333')
-        style.configure('TLabel', font=('Helvetica', 15), background='#333', foreground='white')
-        style.configure('TButton', font=('Helvetica', 15), background='#555', foreground='white', borderwidth=1, padding=5)
-        style.map('TButton', background=[('active', '#666'), ('pressed', '#777')])
-        style.configure('TEntry', font=('Helvetica', 15), foreground='black', fieldbackground='#fff', padding=5)
-        style.configure("Treeview", font=('Helvetica', 13), rowheight=25, background="#333", foreground="white", fieldbackground="#333")
-        style.map("Treeview", background=[('selected', '#555')])
+
+        style.configure('TLabel', font=('Arial', 12), background='#333', foreground='white')
+
+        style.configure('TButton', font=('Arial', 12), background='#555', foreground='white', borderwidth=1, padding=5)
+        style.map('TButton', background=[('active', '#666'), ('pressed', '#777')], foreground=[('pressed', 'white'), ('active', 'white')])
+
+        style.configure('TEntry', font=('Arial', 12), foreground='black', fieldbackground='#fff', padding=5)
+
+        style.configure('Treeview', font=('Arial', 11), background='#333', foreground='white', fieldbackground='#333')
+        style.map('Treeview', background=[('selected', '#555')])
+
+        style.configure('Vertical.TScrollbar', gripcount=0,background='#555', darkcolor='#555', lightcolor='#555',troughcolor='#333', bordercolor='#333', arrowcolor='white')
+
+        style.configure('TText', font=('Arial', 11), foreground='black', background='#fff')
+
+    def center_window(self, window):
+        window.update_idletasks()
+        width = window.winfo_width()
+        height = window.winfo_height()
+        x = (window.winfo_screenwidth() // 2) - (width // 2)
+        y = (window.winfo_screenheight() // 2) - (height // 2)
+        window.geometry('{}x{}+{}+{}'.format(width, height, x, y))
 
     def resize_image(self, event):
         new_width = max(min(self.master.winfo_width() // 5, 300), 100)
@@ -95,6 +113,16 @@ class UI_Screens:
         except requests.ConnectionError:
             messagebox.showerror("Erreur de connexion", "Impossible de se connecter au serveur.")
 
+    def logout(self):
+        self.access_token = None
+        self.username = None
+        self.roles = []
+
+        self.username_display.config(text="")
+
+        self.login_screen()
+        print("You have been logged out.")
+
     def clear_frame(self, frame):
         """ Efface tous les widgets dans le cadre spécifié. """
         for widget in frame.winfo_children():
@@ -116,76 +144,37 @@ class UI_Screens:
         logout_button = ttk.Button(self.main_frame, text="Déconnexion", command=self.logout)
         logout_button.pack(pady=10)
 
-    def show_tickets(self):
-        try:
-            self.clear_frame(self.main_frame)
-
-            tree = ttk.Treeview(self.main_frame, columns=('Ticket ID', 'Sender', 'Resolved', 'Title'), show='headings')
-            tree.heading('Ticket ID', text='Ticket ID')
-            tree.heading('Sender', text='Sender')
-            tree.heading('Resolved', text='Resolved')
-            tree.heading('Title', text='Title')
-            tree.pack(fill=tk.BOTH, expand=True, pady=10)
-
-            tickets = fetch_tickets(self.access_token)
-            for ticket in tickets:
-                tree.insert('', 'end', values=(ticket['ticket_id'], ticket['sender'], ticket['resolved'], ticket['title']))
-
-            button_frame = ttk.Frame(self.main_frame)
-            button_frame.pack(pady=10, fill=tk.X)
-
-            back_button = ttk.Button(button_frame, text="Retour", command=self.home_screen)
-            back_button.pack(side=tk.LEFT, padx=10)
-
-            chat_button = ttk.Button(button_frame, text="Chat", state='disabled')
-            chat_button.pack(side=tk.LEFT, padx=10)
-
-            resolve_button = ttk.Button(button_frame, text="Mark as Resolved", state='disabled')
-            resolve_button.pack(side=tk.LEFT, padx=10)
-
-            delete_button = ttk.Button(button_frame, text="Delete Ticket", state='disabled')
-            delete_button.pack(side=tk.LEFT, padx=10)
-
-            def update_buttons(event):
-                selected_item = tree.selection()
-                if selected_item:
-                    ticket_id = tree.item(selected_item, 'values')[0]
-                    resolved = tree.item(selected_item, 'values')[2]
-
-                    # Call open_chat directly from the chat_functions module
-                    chat_button.config(state='normal', command=lambda: open_chat(ticket_id, self.master, self.access_token, "ROLE_ADMIN"))
-
-                    if "ROLE_ADMIN" in self.roles:
-                        if resolved == 'False':
-                            resolve_button.config(state='normal', command=lambda: self.resolve_ticket(ticket_id))
-                            delete_button.config(state='normal', command=lambda: self.delete_ticket(ticket_id))
-                        else:
-                            resolve_button.config(state='disabled')
-                            delete_button.config(state='disabled')
-                    else:
-                        resolve_button.config(state='disabled')
-                        delete_button.config(state='disabled')
-                else:
-                    chat_button.config(state='disabled')
-                    resolve_button.config(state='disabled')
-                    delete_button.config(state='disabled')
-
-            tree.bind('<<TreeviewSelect>>', update_buttons)
-
-        except Exception as e:
-            messagebox.showerror("Erreur", str(e))
-
     def prompt_new_ticket(self):
-        title = simpledialog.askstring("Create Ticket", "Enter title:", parent=self.master)
-        desc = simpledialog.askstring("Create Ticket", "Enter description:", parent=self.master)
-        if title and desc:
-            create_ticket(title, desc, self.access_token)
+        popup = tk.Toplevel(self.master)
+        popup.title("Create New Ticket")
+        popup.geometry("300x200")
+        popup.resizable(False, False)
+        popup.configure(background='#333')
 
-    def logout(self):
-        self.username_display.config(text="")
-        self.access_token = None
-        self.username = None
-        self.login_screen()
+        label_style = {'font': ('Arial', 12), 'bg': '#333', 'fg': 'white'}
+        entry_style = {'font': ('Arial', 10), 'bg': '#fff', 'fg': 'black', 'insertbackground': 'black'}
+
+        tk.Label(popup, text="Enter Ticket Title:", **label_style).pack(pady=(10, 5))
+        title_entry = tk.Entry(popup, **entry_style)
+        title_entry.pack(pady=(0, 10), padx=20, fill='x')
+
+        tk.Label(popup, text="Enter Description:", **label_style).pack(pady=(5, 5))
+        desc_entry = tk.Entry(popup, **entry_style)
+        desc_entry.pack(pady=(0, 10), padx=20, fill='x')
+
+        def submit_ticket():
+            title = title_entry.get()
+            desc = desc_entry.get()
+            if title and desc:
+                create_ticket(title, desc, self.access_token)
+                popup.destroy()
+
+        submit_button = ttk.Button(popup, text="Create Ticket", command=submit_ticket)
+        submit_button.pack(pady=(5, 10))
+
+        self.center_window(popup)
+        popup.grab_set()
+        self.master.wait_window(popup)
 
     def refresh_messages(self, ticket_id, message_area, access_token):
         """Refresh the message area with new messages from the server."""
@@ -260,32 +249,33 @@ class UI_Screens:
 
             if "ROLE_ADMIN" in self.roles:
                 resolve_button = ttk.Button(button_frame, text="Mark as Resolved", state='disabled')
-                resolve_button.pack(side=tk.LEFT, padx=10)
-
                 delete_button = ttk.Button(button_frame, text="Delete Ticket", state='disabled')
+                resolve_button.pack(side=tk.LEFT, padx=10)
                 delete_button.pack(side=tk.LEFT, padx=10)
 
             def update_buttons(event):
                 selected_item = tree.selection()
                 if selected_item:
                     ticket_id = tree.item(selected_item, 'values')[0]
-                    resolved = tree.item(selected_item, 'values')[2]
 
-                    chat_button.config(state='normal', command=lambda: open_chat(ticket_id, self.master, self.access_token, "ROLE_ADMIN"))
+                    chat_button.config(state='normal', command=lambda: open_chat(ticket_id, self.master, self.access_token, "ROLE_USER"))
 
                     if "ROLE_ADMIN" in self.roles:
+                        resolved = tree.item(selected_item, 'values')[2]
+                        delete_button.config(state='normal', command=lambda: self.delete_ticket(ticket_id))
                         if resolved == 'False':
                             resolve_button.config(state='normal', command=lambda: self.resolve_ticket(ticket_id))
                         else:
                             resolve_button.config(state='disabled')
-                        delete_button.config(state='normal', command=lambda: self.delete_ticket(ticket_id))
+                    else:
+                        if 'resolve_button' in locals():
+                            resolve_button.config(state='disabled')
+                        if 'delete_button' in locals():
+                            delete_button.config(state='disabled')
                 else:
                     chat_button.config(state='disabled')
-                    if "ROLE_ADMIN" in self.roles:
-                        resolve_button.config(state='disabled')
-                        delete_button.config(state='disabled')
 
             tree.bind('<<TreeviewSelect>>', update_buttons)
 
         except Exception as e:
-            messagebox.showerror("Erreur", str(e))
+            messagebox.showerror("Error", f"An error occurred: {str(e)}")
