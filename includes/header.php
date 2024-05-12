@@ -1,8 +1,8 @@
 <header>
     <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
-          <a class="navbar-item" href="<?='index.php'?>">
-            <img src="<?php echo '/assets/img/atd_logo.png' ?>" alt="atd_header_logo">
+          <a class="navbar-item" href="<?= '/index.php' ?>">
+            <img src="<?= '/assets/img/atd_logo.png' ?>" alt="atd_header_logo">
           </a>
       
           <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar">
@@ -15,19 +15,19 @@
       
         <div id="navbar" class="navbar-menu">
           <div class="navbar-start">
-            <a class="navbar-item" href="<?='index.php'?>">
+            <a class="navbar-item" href="<?= '/index.php' ?>">
               Home
             </a>
-            <a class="navbar-item" href="<?='public/about.php'?>">
+            <a class="navbar-item" href="<?= '/public/about.php' ?>">
               About us
             </a>
-            <a class="navbar-item" href="<?='public/missions.php'?>">
+            <a class="navbar-item" href="<?= '/public/missions.php' ?>">
               Our missions
             </a>
-            <a class="navbar-item" href="<?='public/donation.php'?>">
+            <a class="navbar-item" href="<?= '/public/donation.php' ?>">
               Donation
             </a>
-            <a class="navbar-item" href="<?='public/contact.php'?>">
+            <a class="navbar-item" href="<?= '/public/contact.php' ?>">
               Contact us
             </a>
           </div>
@@ -45,5 +45,5 @@
             </div>
           </div>
         </div>
-      </nav>
+    </nav>
 </header>
