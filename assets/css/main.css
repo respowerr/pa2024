@@ -21,3 +21,9 @@ main {
 .footer {
     flex-shrink: 0;
 }
+
+.imgcenter{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
