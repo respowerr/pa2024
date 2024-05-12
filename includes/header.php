@@ -35,10 +35,10 @@
           <div class="navbar-end">
             <div class="navbar-item">
               <div class="buttons">
-                <a class="button is-info" href="#">
-                  <strong>Sign up</strong>
+                <a class="button is-info" href="<?= '/public/register.php' ?>">
+                  <strong>Join us</strong>
                 </a>
-                <a class="button is-light" href="#">
+                <a class="button is-light" href="<?= '/public/login.php' ?>">
                   Log in
                 </a>
               </div>
