@@ -1,9 +1,8 @@
 import tkinter as tk
-from tkinter import ttk, PhotoImage
-from api_functions import login, create_ticket, fetch_tickets
-from chat_functions import open_chat
-from tkinter import simpledialog, messagebox
+from tkinter import ttk, PhotoImage, messagebox
 import requests
+from chat_functions import open_chat, refresh_messages, send_message
+from ticket_functions import create_ticket, fetch_tickets
 
 
 class UI_Screens:
@@ -18,16 +17,13 @@ class UI_Screens:
         self.logo_label.pack(side=tk.TOP, pady=10)
         self.main_frame = ttk.Frame(master)
         self.main_frame.pack(fill=tk.BOTH, pady=20)
-
         self.username_display = ttk.Label(self.master, text="", font=('Arial', 12, 'bold'), background='#333', foreground='white')
         self.username_display.pack(side=tk.BOTTOM, fill=tk.X, padx=20, pady=5)
-
         self.access_token = None
         self.roles = []
         self.username = None
         self.login_screen()
-        self.center_window(self.master) 
-
+        self.center_window(self.master)
 
     def configure_window(self):
         self.master.geometry('1000x600')
@@ -37,21 +33,14 @@ class UI_Screens:
     def configure_styles(self):
         style = ttk.Style()
         style.theme_use('clam')
-
         style.configure('TFrame', background='#333')
-
         style.configure('TLabel', font=('Arial', 12), background='#333', foreground='white')
-
         style.configure('TButton', font=('Arial', 12), background='#555', foreground='white', borderwidth=1, padding=5)
         style.map('TButton', background=[('active', '#666'), ('pressed', '#777')], foreground=[('pressed', 'white'), ('active', 'white')])
-
         style.configure('TEntry', font=('Arial', 12), foreground='black', fieldbackground='#fff', padding=5)
-
         style.configure('Treeview', font=('Arial', 11), background='#333', foreground='white', fieldbackground='#333')
         style.map('Treeview', background=[('selected', '#555')])
-
         style.configure('Vertical.TScrollbar', gripcount=0,background='#555', darkcolor='#555', lightcolor='#555',troughcolor='#333', bordercolor='#333', arrowcolor='white')
-
         style.configure('TText', font=('Arial', 11), foreground='black', background='#fff')
 
     def center_window(self, window):
@@ -64,22 +53,17 @@ class UI_Screens:
 
     def login_screen(self):
         self.clear_frame(self.main_frame)
-
         login_frame = ttk.Frame(self.main_frame, padding=10)
         login_frame.pack(expand=True)
-
         ttk.Label(login_frame, text="Connexion", font=('Helvetica', 18, 'bold')).pack(pady=(0, 20))
-
         username_label = ttk.Label(login_frame, text="Nom d'utilisateur :")
         username_label.pack(fill='x', expand=True)
         username_entry = ttk.Entry(login_frame)
         username_entry.pack(fill='x', expand=True, pady=(5, 20))
-
         password_label = ttk.Label(login_frame, text="Mot de passe :")
         password_label.pack(fill='x', expand=True)
         password_entry = ttk.Entry(login_frame, show='*')
         password_entry.pack(fill='x', expand=True, pady=(5, 20))
-
         login_button = ttk.Button(login_frame, text="Se connecter", command=lambda: self.try_login(username_entry.get(), password_entry.get()))
         login_button.pack(pady=10)
 
@@ -91,15 +75,12 @@ class UI_Screens:
             if response.status_code == 200:
                 response_data = response.json()
                 self.access_token = response_data.get('accessToken')
-                self.roles = response_data.get('roles', []) 
+                self.roles = response_data.get('roles', [])
                 self.username = username
-                
                 role_text = ', '.join(self.roles)
                 self.username_display.config(text=f"Connecté en tant que: {self.username} - Roles: {role_text}")
-                
                 self.master.title(f"Connecté en tant que : {self.username}")
                 self.home_screen()
-                
             else:
                 messagebox.showerror("Erreur de connexion", "Identifiants incorrects ou problème serveur.")
         except requests.ConnectionError:
@@ -109,9 +90,7 @@ class UI_Screens:
         self.access_token = None
         self.username = None
         self.roles = []
-
         self.username_display.config(text="")
-
         self.login_screen()
 
     def clear_frame(self, frame):
@@ -119,18 +98,13 @@ class UI_Screens:
             widget.destroy()
 
     def home_screen(self):
-        for widget in self.main_frame.winfo_children():
-            widget.destroy()
-
+        self.clear_frame(self.main_frame)
         welcome_label = ttk.Label(self.main_frame, text="Bienvenue dans le Système de Ticketing", font=('Helvetica', 18))
         welcome_label.pack(pady=40)
-
-        tickets_button = ttk.Button(self.main_frame, text="Voir les Tickets", command=lambda: self.show_tickets())
+        tickets_button = ttk.Button(self.main_frame, text="Voir les Tickets", command=self.show_tickets)
         tickets_button.pack(pady=10)
-
         create_ticket_button = ttk.Button(self.main_frame, text="Créer un Ticket", command=self.prompt_new_ticket)
         create_ticket_button.pack(pady=10)
-
         logout_button = ttk.Button(self.main_frame, text="Déconnexion", command=self.logout)
         logout_button.pack(pady=10)
 
@@ -140,77 +114,25 @@ class UI_Screens:
         popup.geometry("300x200")
         popup.resizable(False, False)
         popup.configure(background='#333')
-
         label_style = {'font': ('Arial', 12), 'bg': '#333', 'fg': 'white'}
         entry_style = {'font': ('Arial', 10), 'bg': '#fff', 'fg': 'black', 'insertbackground': 'black'}
-
         tk.Label(popup, text="Entrez le Titre du Ticket:", **label_style).pack(pady=(10, 5))
         title_entry = tk.Entry(popup, **entry_style)
         title_entry.pack(pady=(0, 10), padx=20, fill='x')
-
         tk.Label(popup, text="Entrez la Description:", **label_style).pack(pady=(5, 5))
         desc_entry = tk.Entry(popup, **entry_style)
         desc_entry.pack(pady=(0, 10), padx=20, fill='x')
-
         def submit_ticket():
             title = title_entry.get()
             desc = desc_entry.get()
             if title and desc:
                 create_ticket(title, desc, self.access_token)
                 popup.destroy()
-
         submit_button = ttk.Button(popup, text="Créer le Ticket", command=submit_ticket)
         submit_button.pack(pady=(5, 10))
-
         self.center_window(popup)
         popup.grab_set()
         self.master.wait_window(popup)
-
-    def refresh_messages(self, ticket_id, message_area, access_token):
-        headers = {'Authorization': f"Bearer {access_token}"}
-        url = f"http://ddns.callidos-mtf.fr:8080/tickets/{ticket_id}/messages"
-        response = requests.get(url, headers=headers)
-        if response.status_code == 200:
-            messages = response.json()
-            message_area.config(state=tk.NORMAL)
-            message_area.delete(1.0, tk.END)
-            for message in messages:
-                sender = message.get("sender", "Inconnu")
-                msg_text = message.get("message", "")
-                message_area.insert(tk.END, f"{sender}: {msg_text}\n")
-            message_area.config(state=tk.DISABLED)
-            message_area.yview(tk.END)
-        message_area.after(1000, lambda: self.refresh_messages(ticket_id, message_area, access_token))
-
-    def delete_ticket(self, ticket_id):
-        if messagebox.askyesno("Confirmer la Suppression", f"Supprimer le ticket ID {ticket_id}?"):
-            url = f"http://ddns.callidos-mtf.fr:8080/tickets/{ticket_id}"
-            headers = {'Authorization': f'Bearer {self.access_token}'}
-            response = requests.delete(url, headers=headers)
-            if response.status_code == 200:
-                messagebox.showinfo("Succès", "Ticket supprimé avec succès")
-                self.show_tickets()
-            else:
-                messagebox.showerror("Erreur", "Impossible de supprimer le ticket")
-                
-    def enable_resolve_button(self, tree):
-        selected_item = tree.selection()
-        if selected_item:
-            ticket_id = tree.item(selected_item, 'values')[0]
-            resolved_status = tree.item(selected_item, 'values')[2]
-            if resolved_status == 'False':
-                resolve_button = ttk.Button(self.main_frame, text="Marquer comme Résolu", command=lambda: self.resolve_ticket(ticket_id))
-                resolve_button.pack(pady=10)
-
-    def resolve_ticket(self, ticket_id):
-        url = f"http://ddns.callidos-mtf.fr:8080/tickets/{ticket_id}/resolve"
-        headers = {'Authorization': f'Bearer {self.access_token}'}
-        response = requests.put(url, headers=headers)
-        if response.status_code == 200:
-            messagebox.showinfo("Succès", "Ticket marqué comme résolu")
-            self.show_tickets()
-        else:
-            messagebox.showerror("Erreur", f"Impossible de marquer le ticket comme résolu : {response.status_code}")
 
     def show_tickets(self):
         try:
@@ -268,3 +190,25 @@ class UI_Screens:
 
         except Exception as e:
             messagebox.showerror("Erreur", f"Une erreur s'est produite : {str(e)}")
+
+    def resolve_ticket(self, ticket_id):
+        url = f"http://ddns.callidos-mtf.fr:8080/tickets/{ticket_id}/resolve"
+        headers = {'Authorization': f'Bearer {self.access_token}'}
+        response = requests.put(url, headers=headers)
+        if response.status_code == 200:
+            messagebox.showinfo("Success", "Ticket marked as resolved")
+            self.show_tickets()
+        else:
+            messagebox.showerror("Error", f"Failed to mark ticket as resolved: {response.status_code}")
+
+    def delete_ticket(self, ticket_id):
+        if messagebox.askyesno("Confirm Delete", f"Delete ticket ID {ticket_id}?"):
+            url = f"http://ddns.callidos-mtf.fr:8080/tickets/{ticket_id}"
+            headers = {'Authorization': f'Bearer {self.access_token}'}
+            response = requests.delete(url, headers=headers)
+            if response.status_code == 200:
+                messagebox.showinfo("Success", "Ticket deleted successfully")
+                self.show_tickets()
+            else:
+                messagebox.showerror("Error", "Failed to delete ticket")
+                
