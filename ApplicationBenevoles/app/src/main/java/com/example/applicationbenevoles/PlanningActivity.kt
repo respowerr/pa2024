@@ -236,10 +236,6 @@ class PlanningActivity : AppCompatActivity() {
         planningTextView.text = stringBuilder.toString()
     }
 
-
-
-
-
     private fun checkUserEventRegistration(eventId: String, accessToken: String, statusTextView: TextView) {
         val url = "${resources.getString(R.string.server_url_info)}/me"
         Log.d(logTag, "fetchUserEvents: URL: $url")

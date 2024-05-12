@@ -16,6 +16,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONArray
 import org.json.JSONException
+import org.json.JSONObject
 
 data class Event(val id: Int, val details: String)
 
@@ -146,26 +147,42 @@ class ActivitiesActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-
-
     private fun joinEvent(eventId: Int) {
+        Log.d(logTag, "joinEvent: Attempting to join event with ID: $eventId")
         val joinUrl = "${resources.getString(R.string.server_url_activity)}/$eventId/join"
 
-        val stringRequest = object : StringRequest(
-            Method.POST, joinUrl,
-            { _ ->
-                Toast.makeText(
-                    this@ActivitiesActivity,
-                    "You joined the event successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
-                Log.d(logTag, "joinEvent: Successfully joined event with ID: $eventId")
-                redirectToMainActivity()
+        val url = "${resources.getString(R.string.server_url_info)}/me"
+        Log.d(logTag, "joinEvent: URL: $url")
+
+        val stringRequest = object : StringRequest(Method.GET, url,
+            { response ->
+                try {
+                    val jsonResponse = JSONObject(response)
+                    val eventsArray = jsonResponse.getJSONArray("events")
+                    val eventIdList = mutableListOf<Int>()
+                    for (i in 0 until eventsArray.length()) {
+                        val eventId = eventsArray.getJSONObject(i).getInt("id")
+                        eventIdList.add(eventId)
+                    }
+
+                    if (eventIdList.contains(eventId)) {
+                        val errorMessage = "Vous êtes déjà inscrit à cette activité"
+                        Toast.makeText(this@ActivitiesActivity, errorMessage, Toast.LENGTH_SHORT).show()
+                        Log.e(logTag, "joinEvent: Error joining event: $errorMessage")
+                    } else {
+                        Log.d(logTag, "joinEvent: User is not already registered for this event, proceeding to join.")
+                        val joinRequest = createJoinRequest(joinUrl)
+                        queue.add(joinRequest)
+                    }
+
+                } catch (e: JSONException) {
+                    Log.e(logTag, "Error parsing user events JSON: ${e.message}")
+                }
             },
             { error ->
-                val errorMessage = "Vous êtes déjà inscrit a cette activité"
+                val errorMessage = "Error: " + error.message
+                Log.e(logTag, "joinEvent: Error fetching user events: $errorMessage")
                 Toast.makeText(this@ActivitiesActivity, errorMessage, Toast.LENGTH_SHORT).show()
-                Log.e(logTag, "joinEvent: Error joining event: $errorMessage")
             }
         ) {
             override fun getHeaders(): Map<String, String> {
@@ -174,8 +191,39 @@ class ActivitiesActivity : AppCompatActivity() {
                 return headers
             }
         }
+
         queue.add(stringRequest)
     }
+
+
+    private fun createJoinRequest(joinUrl: String): StringRequest {
+        return object : StringRequest(
+            Method.POST, joinUrl,
+            { _ ->
+                Toast.makeText(
+                    this@ActivitiesActivity,
+                    "You joined the event successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+                Log.d(logTag, "Successfully joined the event")
+                redirectToMainActivity()
+            },
+            { _ ->
+                val errorMessage = "Vous avez déjà une activité prévue en meme temps "
+                Toast.makeText(this@ActivitiesActivity, errorMessage, Toast.LENGTH_SHORT).show()
+                Log.e(logTag, "Error joining event: $errorMessage")
+            }
+        ) {
+            override fun getHeaders(): Map<String, String> {
+                val headers = HashMap<String, String>()
+                headers["Authorization"] = "Bearer $accessToken"
+                return headers
+            }
+        }
+    }
+
+
+
 
     private fun quitEvent(eventId: Int) {
         val quitUrl = "${resources.getString(R.string.server_url_activity)}/$eventId/quit"
