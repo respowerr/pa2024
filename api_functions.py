@@ -8,7 +8,7 @@ def login(username, password):
     if response.status_code == 200:
         return response.json()['accessToken']
     else:
-        raise Exception("Login failed with status code: " + str(response.status_code))
+        raise Exception("La connexion a échoué avec le code d'état : " + str(response.status_code))
 
 def create_ticket(title, desc, access_token):
     url = "http://ddns.callidos-mtf.fr:8080/tickets"
@@ -17,21 +17,21 @@ def create_ticket(title, desc, access_token):
     try:
         response = requests.post(url, json=data, headers=headers)
         if response.status_code == 200:
-            messagebox.showinfo("Success", "Ticket created successfully")
+            messagebox.showinfo("Succès", "Ticket créé avec succès")
         elif response.status_code == 401:
-            messagebox.showerror("Authorization Error", "Failed due to invalid or expired token")
+            messagebox.showerror("Erreur d'autorisation", "Échec en raison d'un jeton invalide ou expiré")
         else:
-            messagebox.showerror("Error", f"Failed to create ticket with status code: {response.status_code}")
+            messagebox.showerror("Erreur", f"Échec de la création du ticket avec le code d'état : {response.status_code}")
     except requests.RequestException as e:
-        messagebox.showerror("Network Error", str(e))
+        messagebox.showerror("Erreur réseau", str(e))
 
 def fetch_tickets(access_token):
     if not access_token:
-        raise Exception("No access token provided.")
+        raise Exception("Aucun jeton d'accès fourni.")
     headers = {'Authorization': f'Bearer {access_token}'}
     url = "http://ddns.callidos-mtf.fr:8080/tickets"
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         return response.json()
     else:
-        raise Exception("Failed to fetch tickets with status code: " + str(response.status_code))
+        raise Exception("Échec de la récupération des tickets avec le code d'état : " + str(response.status_code))

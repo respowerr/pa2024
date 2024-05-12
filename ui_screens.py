@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, PhotoImage
 from api_functions import login, create_ticket, fetch_tickets
-from chat_functions import open_chat, send_message, refresh_messages
+from chat_functions import open_chat
 from tkinter import simpledialog, messagebox
 import requests
 
@@ -62,15 +62,7 @@ class UI_Screens:
         y = (window.winfo_screenheight() // 2) - (height // 2)
         window.geometry('{}x{}+{}+{}'.format(width, height, x, y))
 
-    def resize_image(self, event):
-        new_width = max(min(self.master.winfo_width() // 5, 300), 100)
-        new_height = int(new_width * (self.original_logo.height() / self.original_logo.width()))
-        image = self.original_logo.subsample(int(self.original_logo.width() / new_width), int(self.original_logo.height() / new_height))
-        self.logo_label.configure(image=image)
-        self.logo_label.image = image
-
     def login_screen(self):
-        """ Crée l'écran de connexion avec des entrées pour l'username et le mot de passe. """
         self.clear_frame(self.main_frame)
 
         login_frame = ttk.Frame(self.main_frame, padding=10)
@@ -88,7 +80,7 @@ class UI_Screens:
         password_entry = ttk.Entry(login_frame, show='*')
         password_entry.pack(fill='x', expand=True, pady=(5, 20))
 
-        login_button = ttk.Button(login_frame, text="Login", command=lambda: self.try_login(username_entry.get(), password_entry.get()))
+        login_button = ttk.Button(login_frame, text="Se connecter", command=lambda: self.try_login(username_entry.get(), password_entry.get()))
         login_button.pack(pady=10)
 
     def try_login(self, username, password):
@@ -121,10 +113,8 @@ class UI_Screens:
         self.username_display.config(text="")
 
         self.login_screen()
-        print("You have been logged out.")
 
     def clear_frame(self, frame):
-        """ Efface tous les widgets dans le cadre spécifié. """
         for widget in frame.winfo_children():
             widget.destroy()
 
@@ -138,7 +128,7 @@ class UI_Screens:
         tickets_button = ttk.Button(self.main_frame, text="Voir les Tickets", command=lambda: self.show_tickets())
         tickets_button.pack(pady=10)
 
-        create_ticket_button = ttk.Button(self.main_frame, text="Create a Ticket", command=self.prompt_new_ticket)
+        create_ticket_button = ttk.Button(self.main_frame, text="Créer un Ticket", command=self.prompt_new_ticket)
         create_ticket_button.pack(pady=10)
 
         logout_button = ttk.Button(self.main_frame, text="Déconnexion", command=self.logout)
@@ -146,7 +136,7 @@ class UI_Screens:
 
     def prompt_new_ticket(self):
         popup = tk.Toplevel(self.master)
-        popup.title("Create New Ticket")
+        popup.title("Créer un Nouveau Ticket")
         popup.geometry("300x200")
         popup.resizable(False, False)
         popup.configure(background='#333')
@@ -154,11 +144,11 @@ class UI_Screens:
         label_style = {'font': ('Arial', 12), 'bg': '#333', 'fg': 'white'}
         entry_style = {'font': ('Arial', 10), 'bg': '#fff', 'fg': 'black', 'insertbackground': 'black'}
 
-        tk.Label(popup, text="Enter Ticket Title:", **label_style).pack(pady=(10, 5))
+        tk.Label(popup, text="Entrez le Titre du Ticket:", **label_style).pack(pady=(10, 5))
         title_entry = tk.Entry(popup, **entry_style)
         title_entry.pack(pady=(0, 10), padx=20, fill='x')
 
-        tk.Label(popup, text="Enter Description:", **label_style).pack(pady=(5, 5))
+        tk.Label(popup, text="Entrez la Description:", **label_style).pack(pady=(5, 5))
         desc_entry = tk.Entry(popup, **entry_style)
         desc_entry.pack(pady=(0, 10), padx=20, fill='x')
 
@@ -169,7 +159,7 @@ class UI_Screens:
                 create_ticket(title, desc, self.access_token)
                 popup.destroy()
 
-        submit_button = ttk.Button(popup, text="Create Ticket", command=submit_ticket)
+        submit_button = ttk.Button(popup, text="Créer le Ticket", command=submit_ticket)
         submit_button.pack(pady=(5, 10))
 
         self.center_window(popup)
@@ -177,7 +167,6 @@ class UI_Screens:
         self.master.wait_window(popup)
 
     def refresh_messages(self, ticket_id, message_area, access_token):
-        """Refresh the message area with new messages from the server."""
         headers = {'Authorization': f"Bearer {access_token}"}
         url = f"http://ddns.callidos-mtf.fr:8080/tickets/{ticket_id}/messages"
         response = requests.get(url, headers=headers)
@@ -186,7 +175,7 @@ class UI_Screens:
             message_area.config(state=tk.NORMAL)
             message_area.delete(1.0, tk.END)
             for message in messages:
-                sender = message.get("sender", "Unknown")
+                sender = message.get("sender", "Inconnu")
                 msg_text = message.get("message", "")
                 message_area.insert(tk.END, f"{sender}: {msg_text}\n")
             message_area.config(state=tk.DISABLED)
@@ -194,15 +183,15 @@ class UI_Screens:
         message_area.after(1000, lambda: self.refresh_messages(ticket_id, message_area, access_token))
 
     def delete_ticket(self, ticket_id):
-        if messagebox.askyesno("Confirm Delete", f"Delete ticket ID {ticket_id}?"):
+        if messagebox.askyesno("Confirmer la Suppression", f"Supprimer le ticket ID {ticket_id}?"):
             url = f"http://ddns.callidos-mtf.fr:8080/tickets/{ticket_id}"
             headers = {'Authorization': f'Bearer {self.access_token}'}
             response = requests.delete(url, headers=headers)
             if response.status_code == 200:
-                messagebox.showinfo("Success", "Ticket deleted successfully")
+                messagebox.showinfo("Succès", "Ticket supprimé avec succès")
                 self.show_tickets()
             else:
-                messagebox.showerror("Error", "Failed to delete ticket")
+                messagebox.showerror("Erreur", "Impossible de supprimer le ticket")
                 
     def enable_resolve_button(self, tree):
         selected_item = tree.selection()
@@ -210,7 +199,7 @@ class UI_Screens:
             ticket_id = tree.item(selected_item, 'values')[0]
             resolved_status = tree.item(selected_item, 'values')[2]
             if resolved_status == 'False':
-                resolve_button = ttk.Button(self.main_frame, text="Mark as Resolved", command=lambda: self.resolve_ticket(ticket_id))
+                resolve_button = ttk.Button(self.main_frame, text="Marquer comme Résolu", command=lambda: self.resolve_ticket(ticket_id))
                 resolve_button.pack(pady=10)
 
     def resolve_ticket(self, ticket_id):
@@ -218,20 +207,20 @@ class UI_Screens:
         headers = {'Authorization': f'Bearer {self.access_token}'}
         response = requests.put(url, headers=headers)
         if response.status_code == 200:
-            messagebox.showinfo("Success", "Ticket marked as resolved")
+            messagebox.showinfo("Succès", "Ticket marqué comme résolu")
             self.show_tickets()
         else:
-            messagebox.showerror("Error", f"Failed to mark ticket as resolved: {response.status_code}")
+            messagebox.showerror("Erreur", f"Impossible de marquer le ticket comme résolu : {response.status_code}")
 
     def show_tickets(self):
         try:
             self.clear_frame(self.main_frame)
 
-            tree = ttk.Treeview(self.main_frame, columns=('Ticket ID', 'Sender', 'Resolved', 'Title'), show='headings')
-            tree.heading('Ticket ID', text='Ticket ID')
-            tree.heading('Sender', text='Sender')
-            tree.heading('Resolved', text='Resolved')
-            tree.heading('Title', text='Title')
+            tree = ttk.Treeview(self.main_frame, columns=('ID Ticket', 'Expéditeur', 'Résolu', 'Titre'), show='headings')
+            tree.heading('ID Ticket', text='ID Ticket')
+            tree.heading('Expéditeur', text='Expéditeur')
+            tree.heading('Résolu', text='Résolu')
+            tree.heading('Titre', text='Titre')
             tree.pack(fill=tk.BOTH, expand=True, pady=10)
 
             tickets = fetch_tickets(self.access_token)
@@ -248,8 +237,8 @@ class UI_Screens:
             chat_button.pack(side=tk.LEFT, padx=10)
 
             if "ROLE_ADMIN" in self.roles:
-                resolve_button = ttk.Button(button_frame, text="Mark as Resolved", state='disabled')
-                delete_button = ttk.Button(button_frame, text="Delete Ticket", state='disabled')
+                resolve_button = ttk.Button(button_frame, text="Marquer comme Résolu", state='disabled')
+                delete_button = ttk.Button(button_frame, text="Supprimer le Ticket", state='disabled')
                 resolve_button.pack(side=tk.LEFT, padx=10)
                 delete_button.pack(side=tk.LEFT, padx=10)
 
@@ -278,4 +267,4 @@ class UI_Screens:
             tree.bind('<<TreeviewSelect>>', update_buttons)
 
         except Exception as e:
-            messagebox.showerror("Error", f"An error occurred: {str(e)}")
+            messagebox.showerror("Erreur", f"Une erreur s'est produite : {str(e)}")
