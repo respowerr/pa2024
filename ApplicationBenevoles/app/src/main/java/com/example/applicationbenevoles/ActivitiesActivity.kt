@@ -17,8 +17,10 @@ import com.android.volley.toolbox.Volley
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.*
 
-data class Event(val id: Int, val details: String)
+data class Event(val id: Int, val details: String, val eventEnd: String)
 
 class ActivitiesActivity : AppCompatActivity() {
 
@@ -32,8 +34,6 @@ class ActivitiesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_activities)
-
-        Log.d(logTag, "onCreate: Activity created")
 
         activityTextView = findViewById(R.id.activityText)
 
@@ -67,7 +67,8 @@ class ActivitiesActivity : AppCompatActivity() {
             { response ->
                 Log.d(logTag, "fetchActivityData: Activity data fetched successfully")
                 val activityList = parseActivityResponse(response)
-                displayActivity(activityList)
+                val futureActivities = filterFutureActivities(activityList)
+                displayActivity(futureActivities)
             },
             { error ->
                 val errorMessage = "Error: " + error.message
@@ -85,7 +86,6 @@ class ActivitiesActivity : AppCompatActivity() {
 
         queue.add(jsonArrayRequest)
     }
-
 
     private fun parseActivityResponse(response: JSONArray): List<Event> {
         val activityList = mutableListOf<Event>()
@@ -105,14 +105,13 @@ class ActivitiesActivity : AppCompatActivity() {
                         "Fin: $eventEnd\n" +
                         "Lieu: $location\n" +
                         "Description: $description\n\n"
-                activityList.add(Event(eventId, eventDetails))
+                activityList.add(Event(eventId, eventDetails, eventEnd))
             }
         } catch (e: JSONException) {
             Log.e(logTag, "Erreur de la récupération du JSON: ${e.stackTraceToString()}")
         }
         return activityList
     }
-
 
     @SuppressLint("SetTextI18n")
     private fun displayActivity(activityList: List<Event>) {
@@ -161,7 +160,8 @@ class ActivitiesActivity : AppCompatActivity() {
                     val eventsArray = jsonResponse.getJSONArray("events")
                     val eventIdList = mutableListOf<Int>()
                     for (i in 0 until eventsArray.length()) {
-                        val eventId = eventsArray.getJSONObject(i).getInt("id")
+                        val event = eventsArray.getJSONObject(i)
+                        val eventId = event.getInt("id")
                         eventIdList.add(eventId)
                     }
 
@@ -195,7 +195,6 @@ class ActivitiesActivity : AppCompatActivity() {
         queue.add(stringRequest)
     }
 
-
     private fun createJoinRequest(joinUrl: String): StringRequest {
         return object : StringRequest(
             Method.POST, joinUrl,
@@ -221,9 +220,6 @@ class ActivitiesActivity : AppCompatActivity() {
             }
         }
     }
-
-
-
 
     private fun quitEvent(eventId: Int) {
         val quitUrl = "${resources.getString(R.string.server_url_activity)}/$eventId/quit"
@@ -252,5 +248,27 @@ class ActivitiesActivity : AppCompatActivity() {
             }
         }
         queue.add(stringRequest)
+    }
+
+    private fun filterFutureActivities(activityList: List<Event>): List<Event> {
+        val currentDate = Calendar.getInstance().time
+        val filteredList = mutableListOf<Event>()
+        for (event in activityList) {
+            val eventDate = parseDate(event.eventEnd)
+            if (eventDate != null && eventDate.after(currentDate)) {
+                filteredList.add(event)
+            }
+        }
+        return filteredList
+    }
+
+    private fun parseDate(dateString: String): Date? {
+        val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return try {
+            format.parse(dateString)
+        } catch (e: Exception) {
+            Log.e(logTag, "Error parsing date: ${e.message}")
+            null
+        }
     }
 }

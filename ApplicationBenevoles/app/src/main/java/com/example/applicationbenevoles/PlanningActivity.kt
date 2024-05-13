@@ -251,9 +251,9 @@ class PlanningActivity : AppCompatActivity() {
                         eventIdList.add(eventId)
                     }
                     val joinedMessage = if (eventIdList.contains(eventId)) {
-                        "Vous êtes inscrit à la l'activité avec l'ID $eventId"
+                        "Vous êtes inscrit à la conférence avec l'ID $eventId"
                     } else {
-                        "Vous n'êtes pas inscrit à la l'activité avec l'ID $eventId"
+                        "Vous n'êtes pas inscrit à la conférence avec l'ID $eventId"
                     }
                     Log.d(logTag, "Joined Message: $joinedMessage")
 
