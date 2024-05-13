@@ -36,19 +36,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if ($ticketId) {
     $messages = makeHttpRequest($baseUrl . "/$ticketId/messages", "GET");
 }
+if (isset($_GET['ajax']) && $_GET['ajax'] == 1) {
+    header('Content-Type: application/json');
+    echo json_encode($messages);
+    exit;
+}
 $myTickets = $ticketId ? [] : makeHttpRequest($myTicketsUrl, "GET");
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <?php
-        include_once($_SERVER['DOCUMENT_ROOT'] . '/includes/head.php');
-    ?>
+    <title>Tickets - ATD</title>
+    <?php include_once($_SERVER['DOCUMENT_ROOT'] . '/includes/head.php'); ?>
+    <style>
+        .message-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            background-color: #14161A;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 5px;
+            background-color: #eef;
+            border-radius: 5px;
+        }
+        .sender {
+            font-weight: bold;
+        }
+        .date {
+            font-size: 0.8em;
+            color: #777;
+        }
+    </style>
     <?php if ($ticketId): ?>
     <script>
-        setTimeout(function() {
-            window.location.reload();
-        }, 5000);
+    function refreshChat() {
+        fetch('?ticket_id=<?= $ticketId ?>&ajax=1')
+            .then(response => response.json())
+            .then(data => {
+                const messagesContainer = document.getElementById('message-container');
+                messagesContainer.innerHTML = '';
+                data.forEach(message => {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = 'message';
+                    messageDiv.innerHTML = `<span class="sender">${message.sender}:</span> <span class="date">${message.date}</span><p>${message.message}</p>`;
+                    messagesContainer.appendChild(messageDiv);
+                });
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            })
+            .catch(error => console.error('Error:', error));
+    }
+    setInterval(refreshChat, 1000);
     </script>
     <?php endif; ?>
 </head>
@@ -103,13 +143,7 @@ $myTickets = $ticketId ? [] : makeHttpRequest($myTicketsUrl, "GET");
                         <a href="tickets.php" class="button is-small is-primary">Return to Tickets</a>
                         <div class="box">
                             <h2 class="title is-4">Messages for Ticket #<?= htmlspecialchars($ticketId); ?></h2>
-                            <?php foreach ($messages as $message): ?>
-                                <div>
-                                    <span><?= htmlspecialchars($message['sender']); ?>:</span>
-                                    <span><?= htmlspecialchars($message['date']); ?></span>
-                                    <p><?= htmlspecialchars($message['message']); ?></p>
-                                </div>
-                            <?php endforeach; ?>
+                            <div class="message-box" id="message-container"></div>
                             <form method="post">
                                 <input type="hidden" name="ticket_id" value="<?= htmlspecialchars($ticketId); ?>">
                                 <textarea class="textarea" name="message" placeholder="Type your message here..." required></textarea>

@@ -57,8 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <?php include_once($_SERVER['DOCUMENT_ROOT'] . '/includes/head.php'); ?>
     <title>Warehouses - ATD</title>
+    <?php include_once($_SERVER['DOCUMENT_ROOT'] . '/includes/head.php'); ?>
 </head>
 <body>
     <div class="wrapper">
