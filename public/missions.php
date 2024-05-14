@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+<?include_once('maintenance_check.php');?>
 <!DOCTYPE html>
 <html lang="en">
 

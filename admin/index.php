@@ -1,8 +1,9 @@
 <?php 
 session_start();
-if(!in_array('ROLE_ADMIN', $_SESSION['role'])){
-  header("Location: login.php");
-  exit;
+
+if (!isset($_SESSION['role']) || !in_array('ROLE_ADMIN', $_SESSION['role'])) {
+    header("Location: login.php");
+    exit;
 }
 
 $baseUrl = "http://ddns.callidos-mtf.fr:8080";
@@ -43,17 +44,19 @@ function makeHttpRequest($url, $method, $data = null) {
     return json_decode($result, true);
 }
 
-$parityData = makeHttpRequest($baseUrl . "/account/parity", "GET");
+$maintenance_mode = isset($_SESSION['maintenance_mode']) ? $_SESSION['maintenance_mode'] : false;
+
+$title = "Home - HELIX";
+
+include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/head.php';
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <?php
-        $title = "Home - HELIX";
-        include_once($_SERVER['DOCUMENT_ROOT'] . '/admin/includes/head.php');
-    ?>    
+    <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/head.php'; ?>    
 </head>
 <style>
   .chart-container{
@@ -64,12 +67,21 @@ $parityData = makeHttpRequest($baseUrl . "/account/parity", "GET");
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <body>
     <div class="wrapper">
-    <?php include_once($_SERVER['DOCUMENT_ROOT'] . '/admin/includes/header.php') ?>
+    <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/admin/includes/header.php'; ?>
         <main>
             <div class="content">
                 <img src="<?= '/assets/img/helix_white.png' ?>" alt="Helix_logo" width="600px" style="display: block; margin-left: auto; margin-right: auto; margin-top: 30px;">
                 <div style="text-align: center;">
                     <h3 class="title is-3" style="margin-top: 10px;">Admin Panel</h3>
+                    <form method="post" action="../public/maintenance_check.php">
+                        <label for="maintenance_mode_toggle">Maintenance Mode:</label>
+                        <label class="switch">
+                        <input type="checkbox" id="maintenance_mode_toggle" name="maintenance_mode_toggle" value="on" <?php if($maintenance_mode) echo 'checked'; ?>>
+                            <span class="slider round"></span>
+                        </label>                        
+                        <input type="submit" value="Submit">
+                    </form>
+
                 </div>
             </div>
             <div class="chart-container">
@@ -77,7 +89,7 @@ $parityData = makeHttpRequest($baseUrl . "/account/parity", "GET");
             </div>
             
         </main>
-        <?php include_once($_SERVER['DOCUMENT_ROOT'] . '/includes/footer.php')?>
+        <?php include_once $_SERVER['DOCUMENT_ROOT'] . '/includes/footer.php'; ?>
     </div>
     <script>
     const data2 = {
@@ -107,6 +119,16 @@ $parityData = makeHttpRequest($baseUrl . "/account/parity", "GET");
         document.getElementById('myChart2'),
         config2
     );
+
+    document.getElementById('maintenance_mode_toggle').addEventListener('change', function() {
+        const maintenance_mode_toggle = document.getElementById('maintenance_mode_toggle');
+        if (maintenance_mode_toggle.checked) {
+            maintenance_mode_toggle.value = 'on';
+        } else {
+            maintenance_mode_toggle.value = 'off';
+        }
+        this.form.submit();
+    });
 </script>
 
 </body>

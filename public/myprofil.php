@@ -1,5 +1,5 @@
 <?php 
-session_start();
+include_once('maintenance_check.php');
 
 if (!isset($_SESSION['accessToken'])) {
     header("Location: login.php");

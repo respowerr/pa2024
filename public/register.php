@@ -1,5 +1,5 @@
 <?php
-    session_start();
+    include_once('maintenance_check.php');
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $username = $_POST["username"];
         $email = $_POST["email"];
