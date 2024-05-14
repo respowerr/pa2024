@@ -28,6 +28,11 @@ function makeHttpRequest($url, $method, $data = null) {
     if ($method === "POST") {
         $options[CURLOPT_POST] = true;
         $options[CURLOPT_POSTFIELDS] = json_encode($data);
+    } elseif ($method === "PUT") {
+        $options[CURLOPT_CUSTOMREQUEST] = "PUT";
+        $options[CURLOPT_POSTFIELDS] = json_encode($data);
+    } elseif ($method === "DELETE") {
+        $options[CURLOPT_CUSTOMREQUEST] = "DELETE";
     }
 
     $curl = curl_init($url);
@@ -43,12 +48,22 @@ function makeHttpRequest($url, $method, $data = null) {
     return json_decode($result, true);
 }
 
-// Fonction pour traiter les valeurs possiblement null avant de les échapper
 function escape($value) {
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
 }
 
-$parityData = makeHttpRequest($baseUrl . "/account/parity", "GET");
+function updateEvent($eventId, $data) {
+    global $baseUrl;
+    $url = $baseUrl . "/event/" . $eventId;
+    return makeHttpRequest($url, "PUT", $data);
+}
+
+function deleteEvent($eventId) {
+    global $baseUrl;
+    $url = $baseUrl . "/event/" . $eventId;
+    return makeHttpRequest($url, "DELETE");
+}
+
 $allAccounts = makeHttpRequest($baseUrl . "/account/all", "GET");
 ?>
 
@@ -62,10 +77,7 @@ $allAccounts = makeHttpRequest($baseUrl . "/account/all", "GET");
     ?>    
 </head>
 <style>
-  .chart-container {
-      height: 300px;
-      width: 300px;
-  }
+  
   .table-container table {
       margin-top: 20px;
       border: 1px solid #ccc;
@@ -90,9 +102,6 @@ $allAccounts = makeHttpRequest($baseUrl . "/account/all", "GET");
                 <div style="text-align: center;">
                     <h3 class="title is-3" style="margin-top: 10px;">Admin Panel</h3>
                 </div>
-                <div class="chart-container">
-                    <canvas id="myChart2" class="chart"></canvas>
-                </div>
                 <div class="table-container">
                     <table>
                         <thead>
@@ -108,6 +117,8 @@ $allAccounts = makeHttpRequest($baseUrl . "/account/all", "GET");
                                 <th>Sex</th>
                                 <th>Last Login</th>
                                 <th>Registered Date</th>
+                                <th>Edit</th>
+                                <th>Delete</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -124,6 +135,12 @@ $allAccounts = makeHttpRequest($baseUrl . "/account/all", "GET");
                                 <td><?= escape($account['sex']) ?></td>
                                 <td><?= escape($account['last_login']) ?></td>
                                 <td><?= escape($account['register_date']) ?></td>
+                                <td>
+                                    <button onclick="redirectToEditProfile(<?= $account['id'] ?>)">Edit</button>
+                                </td>
+                                <td>
+                                    <button onclick="confirmDeleteProfile(<?= $account['id'] ?>)">Delete</button>
+                                </td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -133,7 +150,40 @@ $allAccounts = makeHttpRequest($baseUrl . "/account/all", "GET");
         </main>
         <?php include_once($_SERVER['DOCUMENT_ROOT'] . '/includes/footer.php')?>
     </div>
+    <script>
+        function redirectToEditProfile(profileId) {
+            window.location.href = 'edit_profile.php?id=' + profileId;
+        }
 
+        function confirmDeleteProfile(profileId) {
+            if (confirm('Are you sure you want to delete this profile?')) {
+                deleteProfile(profileId);
+            }
+        }
+
+        function deleteProfile(profileId) {
+            const url = `http://ddns.callidos-mtf.fr:8080`;
+
+            fetch('<?= $baseUrl ?>/account/' + profileId, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer <?= $_SESSION["accessToken"]; ?>'
+                },
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Profile deleted successfully.');
+                    window.location.reload();
+                } else {
+                    console.error('Error deleting profile:', response.statusText);
+                }
+            })
+            .catch(error => console.error('Error deleting profile:', error));
+        }
+    </script>
 </body>
+
+
 
 </html>
