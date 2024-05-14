@@ -15,7 +15,7 @@
       
         <div id="navbar" class="navbar-menu">
           <div class="navbar-start">
-            <a class="navbar-item" href="<?= '/index.php' ?>">
+            <a class="navbar-item" href="<?= '/admin/index.php' ?>">
               Home
             </a>
             <a class="navbar-item" href="<?= '/public/about.php' ?>">
@@ -24,7 +24,7 @@
             <a class="navbar-item" href="<?= '/public/missions.php' ?>">
               Warehouses
             </a>
-            <a class="navbar-item" href="<?= '/public/donation.php' ?>">
+            <a class="navbar-item" href="<?= '/admin/account.php' ?>">
               Accounts
             </a>
             <a class="navbar-item" href="<?= '/public/contact.php' ?>">

@@ -34,14 +34,13 @@
         $result = file_get_contents($url, false, $context);
 
         if ($result === FALSE) {
-            echo "Registration failed.";
+            echo "<p data-translate='registration_failed'>Registration failed.</p>";
         } else {
             header("Location: login.php");
             exit();
         }
     }
-    ?>
-
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -50,6 +49,7 @@
         $title = "Join us - ATD";
         include_once($_SERVER['DOCUMENT_ROOT'] . '/includes/head.php');
     ?>    
+    <script src="/assets/js/translation.js"></script>
 </head>
 <style>
     .container{
@@ -60,7 +60,6 @@
         margin-top: 15px;
         display: block; margin-left: auto; margin-right: auto;
     }
-
 </style>
 <body>
     <div class="wrapper">
@@ -72,43 +71,43 @@
             <section class="container is-max-desktop">
                 <form action="register.php" method="post" onsubmit="return checkPassword();">
                     <div class="field">
-                        <label class="label">Username</label>
+                        <label class="label" data-translate="username">Username</label>
                         <div class="control">
                             <input class="input" type="text" name="username" placeholder="Emperor Palpatine" required>
                         </div>
                     </div>
                     <div class="field">
-                        <label class="label">Email</label>
+                        <label class="label" data-translate="email">Email</label>
                         <div class="control">
                             <input class="input" type="email" name="email" placeholder="okenobi@jeditemple.com" required>
                         </div>
                     </div>
                     <div class="field">
-                        <label class="label">Phone</label>
+                        <label class="label" data-translate="phone">Phone</label>
                         <div class="control">
                             <input class="input" type="tel" name="phone" placeholder="Your super number" required>
                         </div>
                     </div>
                     <div class="field">
-                        <label class="label">Name</label>
+                        <label class="label" data-translate="name">Name</label>
                         <div class="control">
                             <input class="input" type="text" name="name" placeholder="Your beautiful name" required>
                         </div>
                     </div>
                     <div class="field">
-                        <label class="label">Last name</label>
+                        <label class="label" data-translate="last_name">Last name</label>
                         <div class="control">
                             <input class="input" type="text" name="lastName" placeholder="Your beautiful last name" required>
                         </div>
                     </div>
                     <div class="field">
-                        <label class="label">Postal address</label>
+                        <label class="label" data-translate="postal_address">Postal address</label>
                         <div class="control">
                             <input class="input" type="text" name="location" placeholder="Your amazing address" required>
                         </div>
                     </div>
                     <div class="field">
-                        <label class="label">Password</label>
+                        <label class="label" data-translate="password">Password</label>
                         <div class="control">
                             <input class="input" type="password" name="password" id="password" placeholder="Your super password" required>
                         </div>
@@ -116,22 +115,22 @@
                     <div class="field">
                         <div class="control">
                             <input class="input" type="password" name="confpassword" id="confpassword" placeholder="Confirm password" required>
-                            <p class="help is-danger" id="password-error" style="display:none; color:red; margin-top: 10px;">Passwords do not match</p>
+                            <p class="help is-danger" id="password-error" style="display:none; color:red; margin-top: 10px;" data-translate="password_mismatch">Passwords do not match</p>
                         </div>
                     </div>
                     <div class="field">
-                        <label class="label">Your gender</label>
+                        <label class="label" data-translate="gender">Your gender</label>
                         <div class="control">
                             <div class="select">
                                 <select name="gender">
-                                    <option value="M">Man</option>
-                                    <option value="F">Women</option>
+                                    <option value="M" data-translate="man">Man</option>
+                                    <option value="F" data-translate="woman">Woman</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                     <div class="control">
-                        <button type="submit" class="button is-info" id="btn">Join us</button>
+                        <button type="submit" class="button is-info" id="btn" data-translate="join_us">Join us</button>
                     </div>
                 </form>
             </section>
@@ -141,19 +140,4 @@
         <?php include_once($_SERVER['DOCUMENT_ROOT'] . '/includes/footer.php')?>
     </div>
 </body>
-<script>
-function checkPassword() {
-    var password = document.getElementById("password").value;
-    var confpassword = document.getElementById("confpassword").value;
-    var passwordError = document.getElementById("password-error");
-
-    if (password != confpassword) {
-        passwordError.style.display = "block";
-        return false;
-    } else {
-        passwordError.style.display = "none";
-        return true;
-    }
-}
-</script>
 </html>
