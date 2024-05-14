@@ -75,32 +75,41 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     ];
 
-    $jsonData = json_encode($updatedProfile);
+    $existingUsernameProfile = makeHttpRequest($baseUrl . "/account/username/{$_POST['username']}", "GET");
+    $existingemailProfile = makeHttpRequest($baseUrl . "/account/email/{$_POST['email']}", "GET");
 
-    $curl = curl_init($baseUrl . "/account/{$profileId}");
-    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
-    curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonData);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-        'Content-Type: application/json',
-        'Content-Length: ' . strlen($jsonData),
-        $authHeader
-    ));
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    if ($existingUsernameProfile ) {
+        echo "Le nom d'utilisateur existe déjà. Veuillez choisir un autre nom.";
+    }elseif($existingemailProfile) {
+        echo "L'email existe déjà. Veuillez choisir un autre email.";
+    }else {
+        $jsonData = json_encode($updatedProfile);
 
-    $result = curl_exec($curl);
+        $curl = curl_init($baseUrl . "/account/{$profileId}");
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonData);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($jsonData),
+            $authHeader
+        ));
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-    if ($result !== false) {
-        $responseData = json_decode($result, true);
-        if ($result && isset($result['success']) && $result['success']) {
-            header("Location: account.php");
-            exit;
-        }else{
-            echo "Une erreur s'est produite lors de la mise à jour de l'événement.";
+        $result = curl_exec($curl);
+
+        if ($result !== false) {
+            $responseData = json_decode($result, true);
+            if ($result && isset($result['success']) && $result['success']) {
+                header("Location: account.php");
+                exit;
+            }else{
+                echo "Une erreur s'est produite lors de la mise à jour de l'événement.";
+            }
         }
+
+
+        curl_close($curl);
     }
-
-
-    curl_close($curl);
 }
 
 ?>
