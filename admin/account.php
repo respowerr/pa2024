@@ -52,18 +52,6 @@ function escape($value) {
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
 }
 
-function updateEvent($eventId, $data) {
-    global $baseUrl;
-    $url = $baseUrl . "/event/" . $eventId;
-    return makeHttpRequest($url, "PUT", $data);
-}
-
-function deleteEvent($eventId) {
-    global $baseUrl;
-    $url = $baseUrl . "/event/" . $eventId;
-    return makeHttpRequest($url, "DELETE");
-}
-
 $allAccounts = makeHttpRequest($baseUrl . "/account/all", "GET");
 ?>
 

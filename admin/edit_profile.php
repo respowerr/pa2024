@@ -56,7 +56,7 @@ function escape($value)
 }
 
 if (!isset($_GET['id'])) {
-    echo "ID d'événement manquant.";
+    echo "ID de l'utilisateur manquant.";
     exit;
 }
 
