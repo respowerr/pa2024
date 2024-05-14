@@ -27,8 +27,11 @@ function makeHttpRequest($url, $method, $data = null)
         ]
     ];
 
-    if ($method === "POST" || $method === "PUT") {
-        $options[CURLOPT_CUSTOMREQUEST] = $method;
+    if ($method === "POST") {
+        $options[CURLOPT_POST] = true;
+        $options[CURLOPT_POSTFIELDS] = json_encode($data);
+    } elseif ($method === "PUT") {
+        $options[CURLOPT_CUSTOMREQUEST] = "PUT";
         $options[CURLOPT_POSTFIELDS] = json_encode($data);
     } elseif ($method === "DELETE") {
         $options[CURLOPT_CUSTOMREQUEST] = "DELETE";
@@ -71,14 +74,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         "description" => $_POST['description']
     ];
 
-    $result = makeHttpRequest($baseUrl . "/event/{$eventId}", "PUT", $updatedEvent);
+    $jsonData = json_encode($updatedEvent);
 
-    if ($result && isset($result['success']) && $result['success']) {
+    $curl = curl_init($baseUrl . "/event/{$eventId}");
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonData);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+        'Content-Type: application/json',
+        'Content-Length: ' . strlen($jsonData),
+        $authHeader
+    ));
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+    $result = curl_exec($curl);
+
+    if ($result !== false) {
+        $responseData = json_decode($result, true);
         header("Location: events.php");
         exit;
-    } else {
+        
+    }else{
         echo "Une erreur s'est produite lors de la mise à jour de l'événement.";
+
     }
+
+
+    curl_close($curl);
 }
 ?>
 
