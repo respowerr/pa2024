@@ -18,16 +18,16 @@
             <a class="navbar-item" href="<?= '/admin/index.php' ?>">
               Home
             </a>
-            <a class="navbar-item" href="<?= '/public/about.php' ?>">
+            <a class="navbar-item" href="<?= '/public/events.php' ?>">
               Events
             </a>
-            <a class="navbar-item" href="<?= '/public/missions.php' ?>">
+            <a class="navbar-item" href="<?= '/public/warehouses.php' ?>">
               Warehouses
             </a>
             <a class="navbar-item" href="<?= '/admin/account.php' ?>">
               Accounts
             </a>
-            <a class="navbar-item" href="<?= '/public/contact.php' ?>">
+            <a class="navbar-item" href="<?= '/public/vehicles.php' ?>">
               Vehicles
             </a>
           </div>
