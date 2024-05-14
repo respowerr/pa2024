@@ -27,6 +27,9 @@
             <a class="navbar-item" href="<?= '/admin/account.php' ?>">
               Accounts
             </a>
+            <a class="navbar-item" href="<?= '/public/validate.php' ?>">
+              Account not validate
+            </a>
             <a class="navbar-item" href="<?= '/public/vehicles.php' ?>">
               Vehicles
             </a>
