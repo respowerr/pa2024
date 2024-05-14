@@ -28,6 +28,11 @@ function makeHttpRequest($url, $method, $data = null) {
     if ($method === "POST") {
         $options[CURLOPT_POST] = true;
         $options[CURLOPT_POSTFIELDS] = json_encode($data);
+    } elseif ($method === "PUT") {
+        $options[CURLOPT_CUSTOMREQUEST] = "PUT";
+        $options[CURLOPT_POSTFIELDS] = json_encode($data);
+    } elseif ($method === "DELETE") {
+        $options[CURLOPT_CUSTOMREQUEST] = "DELETE";
     }
 
     $curl = curl_init($url);
@@ -45,6 +50,18 @@ function makeHttpRequest($url, $method, $data = null) {
 
 function escape($value) {
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
+}
+
+function updateEvent($eventId, $data) {
+    global $baseUrl;
+    $url = $baseUrl . "/event/" . $eventId;
+    return makeHttpRequest($url, "PUT", $data);
+}
+
+function deleteEvent($eventId) {
+    global $baseUrl;
+    $url = $baseUrl . "/event/" . $eventId;
+    return makeHttpRequest($url, "DELETE");
 }
 
 $allEvents = makeHttpRequest($baseUrl . "/event", "GET");
@@ -100,6 +117,7 @@ $allEvents = makeHttpRequest($baseUrl . "/event", "GET");
                                 <th>Accepted</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -116,6 +134,10 @@ $allEvents = makeHttpRequest($baseUrl . "/event", "GET");
                                 <td><?= escape($event['accepted']) ? 'Yes' : 'No' ?></td>
                                 <td><?= escape($event['eventStartFormattedDate']) ?></td>
                                 <td><?= escape($event['eventEndFormattedDate']) ?></td>
+                                <td>
+                                    <button onclick="redirectToEditEvent(<?= $event['id'] ?>)">Update</button>
+                                    <button onclick="confirmDeleteEvent(<?= $event['id'] ?>)">Delete</button>
+                                </td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -125,6 +147,39 @@ $allEvents = makeHttpRequest($baseUrl . "/event", "GET");
         </main>
         <?php include_once($_SERVER['DOCUMENT_ROOT'] . '/includes/footer.php')?>
     </div>
+
+    <script>
+        function redirectToEditEvent(eventId) {
+            window.location.href = 'edit_event.php?id=' + eventId;
+        }
+
+        function confirmDeleteEvent(eventId) {
+            if (confirm('Are you sure you want to delete this event?')) {
+                deleteEvent(eventId);
+            }
+        }
+
+        function deleteEvent(eventId) {
+            const url = `http://ddns.callidos-mtf.fr:8080`;
+
+            fetch('<?= $baseUrl ?>/event/' + eventId, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer <?= $_SESSION["accessToken"]; ?>'
+                },
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    console.error('Erreur lors de la suppression de l\'événement:', response.statusText);
+                }
+            })
+            .catch(error => console.error('Erreur lors de la suppression de l\'événement:', error));
+        }
+
+    </script>
 </body>
 
 </html>
