@@ -87,9 +87,13 @@ $allEvents = makeHttpRequest($baseUrl . "/event", "GET");
       padding: 8px;
       text-align: left;
       border-bottom: 1px solid #ddd;
+      color: white;
   }
   .table-container th {
-      background-color: #f2f2f2;
+      background-color: #333;
+  }
+  .table-container tr {
+      background-color: black;
   }
 </style>
 <body>
