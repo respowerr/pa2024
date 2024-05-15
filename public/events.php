@@ -1,8 +1,8 @@
-<?php 
+<?php
 session_start();
-if(!in_array('ROLE_ADMIN', $_SESSION['role'])){
-  header("Location: login.php");
-  exit;
+if (!in_array('ROLE_ADMIN', $_SESSION['role']) && !in_array('ROLE_USER', $_SESSION['role'])) {
+    header("Location: login.php");
+    exit;
 }
 
 $baseUrl = "http://ddns.callidos-mtf.fr:8080";
@@ -27,7 +27,9 @@ function makeHttpRequest($url, $method, $data = null) {
 
     if ($method === "POST") {
         $options[CURLOPT_POST] = true;
-        $options[CURLOPT_POSTFIELDS] = json_encode($data);
+        if ($data) {
+            $options[CURLOPT_POSTFIELDS] = json_encode($data);
+        }
     } elseif ($method === "PUT") {
         $options[CURLOPT_CUSTOMREQUEST] = "PUT";
         $options[CURLOPT_POSTFIELDS] = json_encode($data);
@@ -64,7 +66,16 @@ function deleteEvent($eventId) {
     return makeHttpRequest($url, "DELETE");
 }
 
+function acceptEvent($eventId) {
+    global $baseUrl;
+    $url = $baseUrl . "/event/accept/" . $eventId;
+    return makeHttpRequest($url, "POST");
+}
+
 $allEvents = makeHttpRequest($baseUrl . "/event", "GET");
+$requestedEvents = makeHttpRequest($baseUrl . "/event/request", "GET");
+
+error_log(print_r($requestedEvents, true));
 ?>
 
 <!DOCTYPE html>
@@ -75,30 +86,33 @@ $allEvents = makeHttpRequest($baseUrl . "/event", "GET");
         $title = "Home - HELIX";
         include_once($_SERVER['DOCUMENT_ROOT'] . '/admin/includes/head.php');
     ?>    
+    <style>
+        .table-container table {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table-container th, .table-container td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            color: white;
+        }
+        .table-container th {
+            background-color: #333;
+        }
+        .table-container tr {
+            background-color: black;
+        }
+        .actions button {
+            margin-right: 5px;
+        }
+    </style>
 </head>
-<style>
-  .table-container table {
-      margin-top: 20px;
-      border: 1px solid #ccc;
-      width: 100%;
-      border-collapse: collapse;
-  }
-  .table-container th, .table-container td {
-      padding: 8px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-      color: white;
-  }
-  .table-container th {
-      background-color: #333;
-  }
-  .table-container tr {
-      background-color: black;
-  }
-</style>
 <body>
     <div class="wrapper">
-    <?php include_once($_SERVER['DOCUMENT_ROOT'] . '/admin/includes/header.php') ?>
+        <?php include_once($_SERVER['DOCUMENT_ROOT'] . '/admin/includes/header.php') ?>
         <main>
             <div class="content">
                 <img src="<?= '/assets/img/helix_white.png' ?>" alt="Helix_logo" width="600px" style="display: block; margin-left: auto; margin-right: auto; margin-top: 30px;">
@@ -138,12 +152,62 @@ $allEvents = makeHttpRequest($baseUrl . "/event", "GET");
                                 <td><?= escape($event['accepted']) ? 'Yes' : 'No' ?></td>
                                 <td><?= escape($event['eventStartFormattedDate']) ?></td>
                                 <td><?= escape($event['eventEndFormattedDate']) ?></td>
-                                <td>
-                                    <button onclick="redirectToEditEvent(<?= $event['id'] ?>)">Update</button>
-                                    <button onclick="confirmDeleteEvent(<?= $event['id'] ?>)">Delete</button>
+                                <td class="actions">
+                                    <button onclick="redirectToEditEvent(<?= escape($event['id']) ?>)">Update</button>
+                                    <button onclick="confirmDeleteEvent(<?= escape($event['id']) ?>)">Delete</button>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="table-container">
+                    <h3 class="title is-3" style="margin-top: 10px;">Requested Events</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Event Name</th>
+                                <th>Event Type</th>
+                                <th>Event Start</th>
+                                <th>Event End</th>
+                                <th>Location</th>
+                                <th>Description</th>
+                                <th>Creator</th>
+                                <th>Accepted</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (is_array($requestedEvents) && !empty($requestedEvents)) : ?>
+                                <?php foreach ($requestedEvents as $event): ?>
+                                    <?php if (is_array($event)) : ?>
+                                    <tr>
+                                        <td><?= escape($event['id']) ?></td>
+                                        <td><?= escape($event['eventName']) ?></td>
+                                        <td><?= escape($event['eventType']) ?></td>
+                                        <td><?= escape($event['eventStart']) ?></td>
+                                        <td><?= escape($event['eventEnd']) ?></td>
+                                        <td><?= escape($event['location']) ?></td>
+                                        <td><?= escape($event['description']) ?></td>
+                                        <td><?= escape($event['creator']) ?></td>
+                                        <td><?= escape($event['accepted']) ? 'Yes' : 'No' ?></td>
+                                        <td><?= escape($event['eventStartFormattedDate']) ?></td>
+                                        <td><?= escape($event['eventEndFormattedDate']) ?></td>
+                                        <td class="actions">
+                                            <button onclick="redirectToEditEvent(<?= escape($event['id']) ?>)">Update</button>
+                                            <button onclick="confirmDeleteEvent(<?= escape($event['id']) ?>)">Delete</button>
+                                            <button onclick="acceptEvent(<?= escape($event['id']) ?>)">Accept</button>
+                                        </td>
+                                    </tr>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            <?php else : ?>
+                                <tr><td colspan="12" style="text-align: center;">No requested events found.</td></tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -164,8 +228,6 @@ $allEvents = makeHttpRequest($baseUrl . "/event", "GET");
         }
 
         function deleteEvent(eventId) {
-            const url = `http://ddns.callidos-mtf.fr:8080`;
-
             fetch('<?= $baseUrl ?>/event/' + eventId, {
                 method: 'DELETE',
                 headers: {
@@ -183,7 +245,23 @@ $allEvents = makeHttpRequest($baseUrl . "/event", "GET");
             .catch(error => console.error('Erreur lors de la suppression de l\'événement:', error));
         }
 
+        function acceptEvent(eventId) {
+            fetch('<?= $baseUrl ?>/event/accept/' + eventId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer <?= $_SESSION["accessToken"]; ?>'
+                },
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    console.error('Erreur lors de l\'acceptation de l\'événement:', response.statusText);
+                }
+            })
+            .catch(error => console.error('Erreur lors de l\'acceptation de l\'événement:', error));
+        }
     </script>
 </body>
-
 </html>
