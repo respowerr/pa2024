@@ -32,10 +32,10 @@
                     <?php if(isset($_SESSION['username'])): ?>
                         <p class="navbar-item" style="margin-right: 15px;" data-translate="welcome"><?= 'Welcome, ' . $_SESSION['username']; ?></p>
                         <a class="navbar-item" data-translate="my_profile" href="/public/myprofil.php">My profile</a>
-                        <a class="navbar-item" data-translate="events" href="/public/events.php">Events</a>
                         <a class="navbar-item" data-translate="tickets" href="/public/tickets.php">Tickets</a>
                         <a class="navbar-item" data-translate="warehouses" href="/public/warehouses.php">Warehouses</a>
                         <?php if(in_array('ROLE_ADMIN', $_SESSION['role'])): ?>
+                            <a class="navbar-item" data-translate="events" href="/public/events.php">Events</a>
                             <a class="navbar-item" data-translate="admin_panel" href="/admin/index.php">Admin panel</a>
                         <?php endif; ?>
                         <a class="button is-info" data-translate="logout" href="/public/logout.php">Logout</a>
