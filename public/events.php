@@ -119,6 +119,9 @@ error_log(print_r($requestedEvents, true));
                 <div style="text-align: center;">
                     <h3 class="title is-3" style="margin-top: 10px;">Admin Panel</h3>
                 </div>
+                <div style="text-align: center;">
+                <button onclick="redirectToCreateEvent()">Add Event</h3>
+                </div>
                 <div class="table-container">
                     <h3 class="title is-3" style="margin-top: 10px;">Events</h3>
                     <table>
@@ -217,6 +220,11 @@ error_log(print_r($requestedEvents, true));
     </div>
 
     <script>
+
+        function redirectToCreateEvent(){
+            window.location.href = 'create_event.php';
+
+        }
         function redirectToEditEvent(eventId) {
             window.location.href = 'edit_event.php?id=' + eventId;
         }
